@@ -1,0 +1,30 @@
+/* Layout */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.page__header,
+.page__footer {
+  flex-shrink: 0;
+}
+.page__content {
+  flex: 1 0 auto;
+}
+.page__container {
+  margin: 0 auto;
+  width: 960px;
+}
+
+/* Base design */
+.page__header,
+.page__footer {
+  padding: 20px 0;
+  background: #000;
+  color: #fff;
+}
