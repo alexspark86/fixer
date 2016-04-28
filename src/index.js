@@ -1,3 +1,23 @@
-import Fixer from './fixer';
+import Fixer from '../src/fixer';
 
-Fixer();
+let fixer = new Fixer();
+
+fixer.addElement({
+  element: '.menu',
+  limiter: '.footer'
+});
+
+fixer.addElement({
+  element: '#side-block-1',
+  limiter: '#side-block-2'
+});
+
+fixer.addElement({
+  element: '#side-block-2',
+  limiter: '.bottom-block'
+});
+
+fixer.addElement({
+  element: '.bottom-block',
+  position: 'bottom'
+});
