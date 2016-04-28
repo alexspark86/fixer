@@ -6,7 +6,7 @@ export function defineElement (element) {
   if (typeof element === 'string') {
     element = document.querySelector(element);
   }
-  else if (element instanceof $ && element.length) {
+  else if (typeof $ != 'undefined' && element instanceof $ && element.length) {
     element = element[0];
   }
 
@@ -38,7 +38,7 @@ export function calculateStyles (element) {
  * @param {object} styles
  */
 export function calculateOffset (element, styles) {
-  var rect = this.element.getBoundingClientRect();
+  var rect = element.getBoundingClientRect();
 
   return {
     top: rect.top + document.documentElement.scrollTop - parseInt(styles.marginTop),
