@@ -28,3 +28,27 @@ html, body {
   background: #000;
   color: #fff;
 }
+.menu {
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+.side-block {
+  clear: both;
+  padding: 10px;
+  min-height: 100px;
+  border: 1px solid;
+}
+.side-block._left {
+  float: left;
+  margin: 0 10px 10px 0;
+}
+.side-block._right {
+  float: right;
+  margin: 0 0 10px 10px;
+}
+.bottom-block {
+  display: block;
+  padding: 10px;
+  min-height: 50px;
+  border: 1px solid;
+}
