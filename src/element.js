@@ -58,7 +58,7 @@ export default class Element {
     if (!this.fixed) {
       element.style.width = this.styles.width;  // set width before change position
       element.style.position = 'fixed';
-      element.style.top = offset + 'px';
+      element.style[this.position] = offset + 'px';
       element.style.zIndex = this.styles.zIndex == 'auto' ? '100' : this.styles.zIndex;
       element.className += ' _fixed';
 

@@ -18,6 +18,11 @@ fixer.addElement({
 });
 
 fixer.addElement({
-  element: '.bottom-block',
+  element: '#bottom-block-1',
+  position: 'bottom'
+});
+
+fixer.addElement({
+  element: '#bottom-block-2',
   position: 'bottom'
 });

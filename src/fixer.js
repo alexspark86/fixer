@@ -1,5 +1,6 @@
 import Element from './element';
 import defaults from './defaults';
+import {getScrolledPosition} from './utils';
 
 /**
  * Class representing a fixer.
@@ -14,10 +15,10 @@ class Fixer {
     this.elements = [];
 
     // listen to the page load and scroll
-    window.onload = window.onscroll = () => this.listenScroll(window.pageYOffset || document.documentElement.scrollTop);
+    window.onload = window.onscroll = () => this.listenScroll(getScrolledPosition());
 
     // listen to the page resize and recalculate elements width
-    window.onresize = () => this.recalculateElementsWidth(window.pageYOffset || document.documentElement.scrollTop);
+    window.onresize = () => this.recalculateElementsWidth(getScrolledPosition());
   }
 
   /**
@@ -28,11 +29,14 @@ class Fixer {
   addElement (options) {
     let element = null;
 
+    // TODO: check if some element is using position of this one
+
     if (options) {
       element = new Element(options);
 
       if (element.element && element.element.tagName) {
         this.elements.push(element);
+        this.listenScroll(getScrolledPosition());
       }
       else {
         throw new Error("Can't add element '" + options.element +"', please check the options", options);
@@ -57,10 +61,18 @@ class Fixer {
       let height = this.getHeight(element);
 
       if (element.position == "top") {
-        if (element.offset.top <= scrolled + height && element.fixed === false) {
+        if (element.offset.top <= scrolled.top + height && element.fixed === false) {
           element.fix(height);
         }
-        else if (element.offset.top >= scrolled + height) {
+        else if (element.offset.top >= scrolled.top + height) {
+          element.unFix();
+        }
+      }
+      else if (element.position == "bottom") {
+        if (element.offset.bottom >= scrolled.top - height + document.documentElement.offsetHeight && element.fixed === false) {
+          element.fix(height);
+        }
+        else if (element.offset.bottom <= scrolled.top - height + document.documentElement.offsetHeight) {
           element.unFix();
         }
       }
@@ -92,12 +104,14 @@ class Fixer {
       item = this.elements[i];
 
       if (
-        item.fixed &&                 // if element is fixed
-        item.placeholder &&           // if element have placeholder
-        item.placeholder.offsetWidth  // if placeholder have width value
+        item.fixed &&                   // if element is fixed
+        item.placeholder &&             // if element have placeholder
+        item.placeholder.offsetWidth && // if placeholder have width value
+        item.element.offsetWidth !== item.placeholder.offsetWidth
       ) {
+        // TODO: check calculating of width with different css box-sizing values
         // set the value of an element width equal to the width its placeholder
-        item.element.style.width = item.placeholder.offsetWidth + 'px';
+        item.element.style.width = item.placeholder.offsetWidth - item.styles.paddingLeft - item.styles.paddingRight + 'px';
       }
     }
 

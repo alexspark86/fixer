@@ -51,3 +51,14 @@ export function calculateOffset (element, styles) {
     right: rect.right + document.documentElement.scrollLeft
   };
 }
+
+/**
+ * Getting scrollbar position
+ * @return {{top: {Number}, left: {Number}}}
+ */
+export function getScrolledPosition () {
+  return {
+    top: window.pageYOffset || document.documentElement.scrollTop,
+    left: window.pageXOffset || document.documentElement.scrollLeft
+  }
+}
