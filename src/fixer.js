@@ -51,28 +51,28 @@ class Fixer {
 
   /**
    * Function listening scroll.
-   * @param {number} scrolled Document scrolled height in pixels
+   * @param {{top: {Number}, left: {Number}}} scrolled Document scrolled values in pixels
    */
   listenScroll (scrolled) {
     let i = this.elements.length;
 
     while (i--) {
       let element = this.elements[i];
-      let height = this.getHeight(element);
+      let stackHeight = this.getStackHeight(element);
 
       if (element.position == "top") {
-        if (element.offset.top <= scrolled.top + height && element.fixed === false) {
-          element.fix(height);
+        if (element.offset.top <= scrolled.top + stackHeight && element.fixed === false) {
+          element.fix(stackHeight);
         }
-        else if (element.offset.top >= scrolled.top + height) {
+        else if (element.offset.top >= scrolled.top + stackHeight) {
           element.unFix();
         }
       }
       else if (element.position == "bottom") {
-        if (element.offset.bottom >= scrolled.top - height + document.documentElement.offsetHeight && element.fixed === false) {
-          element.fix(height);
+        if (element.offset.bottom >= scrolled.top - stackHeight + document.documentElement.offsetHeight && element.fixed === false) {
+          element.fix(stackHeight);
         }
-        else if (element.offset.bottom <= scrolled.top - height + document.documentElement.offsetHeight) {
+        else if (element.offset.bottom <= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
           element.unFix();
         }
       }
@@ -80,9 +80,9 @@ class Fixer {
   }
 
   /**
-   * Getting height for an element
+   * Getting height of stack for an element
    */
-  getHeight (element) {
+  getStackHeight (element) {
     return this.elements.reduce((sum, item) => {
       if (element.position === item.position && (element.position === "top" ? item.offset.top < element.offset.top : item.offset.bottom > element.offset.bottom)) {
         return sum + (+item.height || 0);
