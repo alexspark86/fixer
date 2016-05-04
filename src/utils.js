@@ -24,9 +24,13 @@ export function calculateStyles (element) {
     position: styles.position,
     top: styles.top,
     zIndex: styles.zIndex,
+    float: styles.float,
+    clear: styles.clear,
     display: styles.display,
     marginTop: styles.marginTop,
+    marginRight: styles.marginRight,
     marginBottom: styles.marginBottom,
+    marginLeft: styles.marginLeft,
     width: styles.width,
     maxWidth: styles.maxWidth
   };
@@ -42,6 +46,8 @@ export function calculateOffset (element, styles) {
 
   return {
     top: rect.top + document.documentElement.scrollTop - parseInt(styles.marginTop),
-    left: rect.left + document.documentElement.scrollLeft
+    bottom: rect.bottom + document.documentElement.scrollTop - parseInt(styles.marginTop),
+    left: rect.left + document.documentElement.scrollLeft,
+    right: rect.right + document.documentElement.scrollLeft
   };
 }

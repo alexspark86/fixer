@@ -32,11 +32,15 @@ export default class Element {
     var placeholder = document.createElement('div');
 
     placeholder.className = this.placeholderClass;
-    placeholder.style.width = this.styles.width;
+    placeholder.style.width = this.element.offsetWidth + 'px';
     placeholder.style.height = this.element.offsetHeight + 'px';
     placeholder.style.maxWidth = this.styles.maxWidth;
     placeholder.style.marginTop = this.styles.marginTop;
+    placeholder.style.marginRight = this.styles.marginRight;
     placeholder.style.marginBottom = this.styles.marginBottom;
+    placeholder.style.marginLeft = this.styles.marginLeft;
+    placeholder.style.float = this.styles.float;
+    placeholder.style.clear = this.styles.clear;
     placeholder.style.zIndex = '-1'; // for buggy Safari
     placeholder.style.display = 'none';
 
@@ -52,11 +56,15 @@ export default class Element {
     var placeholder = this.placeholder;
 
     if (!this.fixed) {
-      element.style.width = this.element.offsetWidth + 'px';  // set width before change position
+      element.style.width = this.styles.width;  // set width before change position
       element.style.position = 'fixed';
       element.style.top = offset + 'px';
       element.style.zIndex = this.styles.zIndex == 'auto' ? '100' : this.styles.zIndex;
       element.className += ' _fixed';
+
+      if (this.styles.float !== 'none') {
+        element.style.left = this.offset.left - parseInt(this.styles.marginLeft) + 'px';
+      }
 
       if (this.centering) {
         element.style.left = 0;

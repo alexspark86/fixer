@@ -13,12 +13,6 @@ class Fixer {
     // array of the registered elements to fix
     this.elements = [];
 
-    // stack object
-    this.stack = {
-      top: [],
-      bottom: []
-    };
-
     // listen to the page load and scroll
     window.onload = window.onscroll = () => this.listenScroll(window.pageYOffset || document.documentElement.scrollTop);
 
@@ -56,7 +50,34 @@ class Fixer {
    * @param {number} scrolled Document scrolled height in pixels
    */
   listenScroll (scrolled) {
-    console.log(scrolled);
+    let i = this.elements.length;
+
+    while (i--) {
+      let element = this.elements[i];
+      let height = this.getHeight(element);
+
+      if (element.position == "top") {
+        if (element.offset.top <= scrolled + height && element.fixed === false) {
+          element.fix(height);
+        }
+        else if (element.offset.top >= scrolled + height) {
+          element.unFix();
+        }
+      }
+    }
+  }
+
+  /**
+   * Getting height for an element
+   */
+  getHeight (element) {
+    return this.elements.reduce((sum, item) => {
+      if (element.position === item.position && (element.position === "top" ? item.offset.top < element.offset.top : item.offset.bottom > element.offset.bottom)) {
+        return sum + (+item.height || 0);
+      }
+
+      return sum;
+    }, 0);
   }
 
   /**
