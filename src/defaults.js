@@ -1,6 +1,5 @@
 /**
  * @typedef {Object} defaults
- * @property {HTMLElement|string} element Dom element or selector of element
  * @property {string} position Screen side to fix an element ('top'|'bottom'|'top bottom')
  * @property {boolean} placeholder Indicates whether placeholder is needed
  * @property {string} placeholderClass Classname to generate the placeholder
@@ -10,7 +9,6 @@
  */
 
 let defaults = {
-  element: null,
   position: 'top',
   placeholder: true,
   placeholderClass: 'fixer-placeholder',
