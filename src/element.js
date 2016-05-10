@@ -3,25 +3,25 @@ import defaults from './defaults';
 
 export default class Element {
 
-  constructor (options) {
+  constructor (selector, options) {
     Object.assign(this, defaults, options);
     
     this.fixed = false;
     
-    // define the element and limiters
-    this.element = defineElement(this.element);
+    // define element and limiters
+    this.node = defineElement(selector);
     this.limiter = defineElement(this.limiter);
 
-    if (this.element && this.element.tagName) {
+    if (this.node && this.node.tagName) {
 
-      // saving styles of the element
-      this.styles = calculateStyles(this.element);
+      // saving styles of element
+      this.styles = calculateStyles(this.node);
 
-      // saving top and left offsets of the element
-      this.offset = calculateOffset(this.element, this.styles);
+      // saving top and left offsets of element
+      this.offset = calculateOffset(this.node, this.styles);
 
       // saving element height
-      this.height = this.element.offsetHeight;
+      this.height = this.node.offsetHeight;
 
       // creating placeholder if needed
       this.placeholder ? this.placeholder = this.createPlaceholder() : null;
@@ -32,8 +32,8 @@ export default class Element {
     var placeholder = document.createElement('div');
 
     placeholder.className = this.placeholderClass;
-    placeholder.style.width = this.element.offsetWidth + 'px';
-    placeholder.style.height = this.element.offsetHeight + 'px';
+    placeholder.style.width = this.node.offsetWidth + 'px';
+    placeholder.style.height = this.node.offsetHeight + 'px';
     placeholder.style.maxWidth = this.styles.maxWidth;
     placeholder.style.marginTop = this.styles.marginTop;
     placeholder.style.marginRight = this.styles.marginRight;
@@ -44,7 +44,7 @@ export default class Element {
     placeholder.style.zIndex = '-1'; // for buggy Safari
     placeholder.style.display = 'none';
 
-    this.element.parentNode.insertBefore(placeholder, this.element.nextSibling);
+    this.node.parentNode.insertBefore(placeholder, this.node.nextSibling);
 
     delete this.placeholderClass;
 
@@ -52,7 +52,7 @@ export default class Element {
   }
 
   fix (offset) {
-    var element = this.element;
+    var element = this.node;
     var placeholder = this.placeholder;
 
     if (!this.fixed) {
@@ -80,7 +80,7 @@ export default class Element {
   }
 
   unFix () {
-    var element = this.element;
+    var element = this.node;
     var placeholder = this.placeholder;
 
     if (this.fixed) {
@@ -100,10 +100,10 @@ export default class Element {
   };
 
   hide () {
-    this.element.style.display = 'none';
+    this.node.style.display = 'none';
   }
 
   show () {
-    this.element.style.display = this.styles.display;
+    this.node.style.display = this.styles.display;
   }
 }

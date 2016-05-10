@@ -8,7 +8,7 @@ import {getScrolledPosition} from './utils';
 class Fixer {
 
   /**
-   * Create a fixer.
+   * Create fixer.
    */
   constructor () {
     // array of the registered elements to fix
@@ -22,19 +22,20 @@ class Fixer {
   }
 
   /**
-   * Adding element to Fixer.
+   * Adding an element to Fixer.
+   * @param {HTMLElement|String|jQuery} element
    * @param {defaults} options
    * @return {Element|boolean}
    */
-  addElement (options) {
+  addElement (element, options) {
     let element = null;
 
     // TODO: check if some element is using position of this one
 
-    if (options) {
-      element = new Element(options);
+    if (element) {
+      element = new Element(element, options);
 
-      if (element.element && element.element.tagName) {
+      if (element.node && element.node.tagName) {
         this.elements.push(element);
         this.listenScroll(getScrolledPosition());
       }
@@ -80,7 +81,8 @@ class Fixer {
   }
 
   /**
-   * Getting height of stack for an element
+   * Get stack height for an element.
+   * @param {Element} element
    */
   getStackHeight (element) {
     return this.elements.reduce((sum, item) => {
@@ -93,7 +95,7 @@ class Fixer {
   }
 
   /**
-   * Recalculating width of the fixed elements (on resize).
+   * Recalculate width of the fixed elements (on resize).
    * @param {number} scrolled Document scrolled height in pixels
    */
   recalculateElementsWidth (scrolled) {
