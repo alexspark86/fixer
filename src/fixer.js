@@ -24,8 +24,8 @@ class Fixer {
   /**
    * Adding an element to Fixer.
    * @param {String|HTMLElement|jQuery} selector
-   * @param {defaults} options
-   * @return {Element|boolean}
+   * @param {defaults=} options
+   * @return {Fixer}
    */
   addElement (selector, options) {
     let element = null;
@@ -47,7 +47,7 @@ class Fixer {
       throw new Error("Please, provide selector or node to add new Fixer element");
     }
 
-    return element;
+    return this;
   }
 
   /**
