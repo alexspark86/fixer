@@ -23,7 +23,9 @@
     "start": "webpack-dev-server"
   },
   "dependencies": {
+    "debounce": "^1.0.0",
     "node-uuid": "^1.4.7",
-    "rimraf": "^2.5.2"
+    "rimraf": "^2.5.2",
+    "throttleit": "^1.0.0"
   }
 }

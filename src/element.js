@@ -29,7 +29,7 @@ export default class Element {
   }
 
   createPlaceholder () {
-    var placeholder = document.createElement('div');
+    var placeholder = document.createElement('span');
 
     placeholder.className = this.placeholderClass;
     placeholder.style.width = this.node.offsetWidth + 'px';
@@ -55,48 +55,55 @@ export default class Element {
     var element = this.node;
     var placeholder = this.placeholder;
 
-    if (!this.fixed) {
-      element.style.width = this.styles.width;  // set width before change position
-      element.style.position = 'fixed';
-      element.style[this.position] = offset + 'px';
-      element.style.zIndex = this.styles.zIndex == 'auto' ? '100' : this.styles.zIndex;
-      element.className += ' _fixed';
+    element.style.width = this.styles.width;  // set width before change position
+    element.style.position = 'fixed';
+    element.style[this.position] = offset + 'px';
+    element.style.zIndex = this.styles.zIndex == 'auto' ? '100' : this.styles.zIndex;
 
-      if (this.styles.float !== 'none') {
-        element.style.left = this.offset.left - parseInt(this.styles.marginLeft) + 'px';
-      }
-
-      if (this.centering) {
-        element.style.left = 0;
-        element.style.right = 0;
-      }
-
-      if (placeholder) {
-        placeholder.style.display = 'block';
-      }
-
-      this.fixed = true;
+    if (document.documentElement.classList && !element.classList.contains(this.fixedClass)) {
+      element.classList.add(this.fixedClass);
     }
+    else if (element.className.indexOf(this.fixedClass) == -1) {
+      element.className += ' ' + this.fixedClass;
+    }
+
+    if (this.styles.float !== 'none') {
+      element.style.left = this.offset.left - parseInt(this.styles.marginLeft) + 'px';
+    }
+
+    if (this.centering) {
+      element.style.left = 0;
+      element.style.right = 0;
+    }
+
+    if (placeholder) {
+      placeholder.style.display = this.styles.display;
+    }
+
+    this.fixed = true;
   }
 
   unFix () {
     var element = this.node;
     var placeholder = this.placeholder;
 
-    if (this.fixed) {
-      element.style.width = '';  // set width before change position
-      element.style.position = this.styles.position;
-      element.style.top = this.styles.top;
-      element.style.zIndex = this.styles.zIndex;
-      element.style.marginTop = this.styles.marginTop;
-      element.className = element.className.replace('_fixed', '');
+    element.style.width = '';  // set width before change position
+    element.style.position = this.styles.position;
+    element.style.top = this.styles.top;
+    element.style.zIndex = this.styles.zIndex;
+    element.style.marginTop = this.styles.marginTop;
 
-      if (placeholder) {
-        placeholder.style.display = 'none';
-      }
-
-      this.fixed = false;
+    if (document.documentElement.classList) {
+      element.classList.remove(this.fixedClass)
+    } else {
+      element.className = element.className.replace(this.fixedClass, '');
     }
+
+    if (placeholder) {
+      placeholder.style.display = 'none';
+    }
+
+    this.fixed = false;
   };
 
   hide () {

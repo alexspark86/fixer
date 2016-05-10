@@ -54,7 +54,12 @@ export function calculateOffset (element, styles) {
 
 /**
  * Getting scrollbar position
- * @return {{top: {Number}, left: {Number}}}
+ * 
+ * @typedef {Object} scrolled
+ * @property {Number} top
+ * @property {Number} left
+ * 
+ * @return {scrolled}
  */
 export function getScrolledPosition () {
   return {

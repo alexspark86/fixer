@@ -1,6 +1,8 @@
 import Element from './element';
 import defaults from './defaults';
 import {getScrolledPosition} from './utils';
+import debounce from 'debounce';
+import throttle from 'throttleit';
 
 /**
  * Class representing a fixer.
@@ -15,10 +17,10 @@ class Fixer {
     this.elements = [];
 
     // listen to the page load and scroll
-    window.onload = window.onscroll = () => this.listenScroll(getScrolledPosition());
+    window.onload = window.onscroll = throttle(() => this.listenScroll(getScrolledPosition()), 16);
 
     // listen to the page resize and recalculate elements width
-    window.onresize = () => this.recalculateElementsWidth(getScrolledPosition());
+    window.onresize = debounce(() => this.recalculateElementsWidth(getScrolledPosition()), 100);
   }
 
   /**
@@ -52,7 +54,7 @@ class Fixer {
 
   /**
    * Function listening scroll.
-   * @param {{top: {Number}, left: {Number}}} scrolled Document scrolled values in pixels
+   * @param {scrolled} scrolled Document scrolled values in pixels
    */
   listenScroll (scrolled) {
     let i = this.elements.length;
@@ -85,18 +87,24 @@ class Fixer {
    * @param {Element} element
    */
   getStackHeight (element) {
-    return this.elements.reduce((sum, item) => {
-      if (element.position === item.position && (element.position === "top" ? item.offset.top < element.offset.top : item.offset.bottom > element.offset.bottom)) {
-        return sum + (+item.height || 0);
-      }
+    let sum = 0;
+    let i = this.elements.length;
+    let item;
 
-      return sum;
-    }, 0);
+    while (i--) {
+      item = this.elements[i];
+
+      if (element.position === item.position && (element.position === "top" ? item.offset.top < element.offset.top : item.offset.bottom > element.offset.bottom)) {
+        sum += item.height || 0;
+      }
+    }
+
+    return sum;
   }
 
   /**
    * Recalculate width of the fixed elements (on resize).
-   * @param {number} scrolled Document scrolled height in pixels
+   * @param {scrolled} scrolled Document scrolled height in pixels
    */
   recalculateElementsWidth (scrolled) {
     let i = this.elements.length;
@@ -109,11 +117,11 @@ class Fixer {
         item.fixed &&                   // if element is fixed
         item.placeholder &&             // if element have placeholder
         item.placeholder.offsetWidth && // if placeholder have width value
-        item.element.offsetWidth !== item.placeholder.offsetWidth
+        item.node.offsetWidth !== item.placeholder.offsetWidth
       ) {
         // TODO: check calculating of width with different css box-sizing values
         // set the value of an element width equal to the width its placeholder
-        item.element.style.width = item.placeholder.offsetWidth - item.styles.paddingLeft - item.styles.paddingRight + 'px';
+        item.node.style.width = item.placeholder.offsetWidth - item.styles.paddingLeft - item.styles.paddingRight + 'px';
       }
     }
 
