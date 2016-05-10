@@ -23,28 +23,28 @@ class Fixer {
 
   /**
    * Adding an element to Fixer.
-   * @param {HTMLElement|String|jQuery} element
+   * @param {String|HTMLElement|jQuery} selector
    * @param {defaults} options
    * @return {Element|boolean}
    */
-  addElement (element, options) {
+  addElement (selector, options) {
     let element = null;
 
     // TODO: check if some element is using position of this one
 
-    if (element) {
-      element = new Element(element, options);
+    if (selector) {
+      element = new Element(selector, options);
 
       if (element.node && element.node.tagName) {
         this.elements.push(element);
         this.listenScroll(getScrolledPosition());
       }
       else {
-        throw new Error("Can't add element '" + options.element +"', please check the options", options);
+        throw new Error("Can't add element '" + selector);
       }
     }
     else {
-      throw new Error("Please, provide options to add new Fixer element");
+      throw new Error("Please, provide selector or node to add new Fixer element");
     }
 
     return element;
