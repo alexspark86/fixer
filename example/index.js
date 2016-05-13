@@ -1,4 +1,5 @@
 import Fixer from '../src/fixer';
+import './index.css';
 
 let fixer = new Fixer();
 
@@ -7,7 +8,7 @@ fixer
   .addElement('#side-block-1', {
     limiter: '#side-block-2'
   })
-    .addElement('#side-block-2', {
+  .addElement('#side-block-2', {
     limiter: '.bottom-block'
   })
   .addElement('#bottom-block-1', {

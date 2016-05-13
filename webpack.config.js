@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const TARGET = process.env.npm_lifecycle_event;
 const PATHS = {
@@ -8,19 +9,29 @@ const PATHS = {
   build: path.join(__dirname, 'build'),
   example: path.join(__dirname, 'example')
 };
+
 const common = {
   entry: {
-    app: PATHS.src
+    'dist/fixer': path.resolve(__dirname, 'index'),
+    'example/example': path.resolve(PATHS.example, 'index')
   },
   output: {
     path: PATHS.build,
-    filename: 'fixer.js'
+    filename: '[name].js'
   },
   module: {
     loaders: [
       {
+        test: /\.css$/,
+        loader: "style-loader!css-loader"
+      },
+      {
         test: /\.js$/,
-        loader: "babel-loader"
+        loader: "babel-loader",
+        exclude: /node_modules/,
+        query: {
+          presets: ['es2015']
+        }
       }
     ]
   }
@@ -32,7 +43,7 @@ if (TARGET === 'start' || !TARGET) {
     devServer: {
       contentBase: PATHS.example,
       historyApiFallback: true,
-      hot: true,
+      hot: false,
       inline: true,
       progress: true,
       stats: 'errors-only',
@@ -40,7 +51,12 @@ if (TARGET === 'start' || !TARGET) {
       port: process.env.PORT || 3000
     },
     plugins: [
-      new webpack.HotModuleReplacementPlugin()
+      new HtmlWebpackPlugin({
+        filename: 'index.html',
+        title: 'Fixer example',
+        template: path.join(PATHS.example, 'index.ejs'),
+        inject: false
+      })
     ]
   });
 }

@@ -52,6 +52,9 @@ html, body {
   min-height: 50px;
   border: 1px solid;
 }
+#bottom-block-2 {
+  height: 100px;
+}
 ._fixed {
   background-color: rgba(255,255,0, 0.5);
 }
