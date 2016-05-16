@@ -26,6 +26,10 @@ const common = {
         loader: "style-loader!css-loader"
       },
       {
+        test: /\.scss$/,
+        loaders: ["style", "css", "sass"]
+      },
+      {
         test: /\.js$/,
         loader: "babel-loader",
         exclude: /node_modules/,

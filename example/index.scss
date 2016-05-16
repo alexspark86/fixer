@@ -37,15 +37,17 @@ html, body {
   padding: 10px;
   min-height: 100px;
   border: 1px solid;
+
+  &._left {
+    float: left;
+    margin: 0 10px 10px 0;
+  }
+  &._right {
+    float: right;
+    margin: 0 0 10px 10px;
+  }
 }
-.side-block._left {
-  float: left;
-  margin: 0 10px 10px 0;
-}
-.side-block._right {
-  float: right;
-  margin: 0 0 10px 10px;
-}
+
 .bottom-block {
   display: block;
   padding: 10px;
@@ -55,6 +57,8 @@ html, body {
 #bottom-block-2 {
   height: 100px;
 }
+
+/* Debug styles */
 ._fixed {
   background-color: rgba(255,255,0, 0.5);
 }

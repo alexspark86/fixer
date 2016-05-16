@@ -1,5 +1,5 @@
 import Fixer from '../src/fixer';
-import './index.css';
+import './index.scss';
 
 let fixer = new Fixer();
 

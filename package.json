@@ -26,7 +26,9 @@
     "babel-plugin-transform-runtime": "^6.8.0",
     "css-loader": "^0.23.1",
     "html-webpack-plugin": "^2.16.1",
+    "node-sass": "^3.7.0",
     "rimraf": "^2.5.2",
+    "sass-loader": "^3.2.0",
     "style-loader": "^0.13.1"
   },
   "scripts": {
