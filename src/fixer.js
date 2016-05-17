@@ -17,10 +17,13 @@ class Fixer {
     this.elements = [];
 
     // listen to the page load and scroll
-    window.onload = window.onscroll = throttle(() => this.listenScroll(getScrolledPosition()), 16);
+    let onScroll = throttle(() => this.listenScroll(getScrolledPosition()), 16);
+    window.addEventListener('scroll', onScroll);
+    window.addEventListener('load', onScroll);
 
     // listen to the page resize and recalculate elements width
-    window.onresize = debounce(() => this.recalculateElementsWidth(getScrolledPosition()), 100);
+    let onResize = debounce(() => this.recalculateElementsWidth(getScrolledPosition()), 100);
+    window.addEventListener('resize', onResize);
   }
 
   /**
