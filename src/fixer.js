@@ -16,7 +16,7 @@ class Fixer {
     this.elements = [];
 
     // listen to the page load and scroll
-    let onScroll = throttle(() => this.listenScroll(getScrolledPosition()), 16);
+    let onScroll = throttle(() => this.onScroll(getScrolledPosition()), 16);
     window.addEventListener('scroll', onScroll);
     window.addEventListener('load', onScroll);
 
@@ -34,14 +34,11 @@ class Fixer {
   addElement (selector, options) {
     let element = null;
 
-    // TODO: check if some element is using position of this one
-
     if (selector) {
       element = new Element(selector, options);
 
       if (element.node && element.node.tagName) {
         this.elements.push(element);
-        this.listenScroll(getScrolledPosition());
       }
       else {
         throw new Error("Can't add element '" + selector);
@@ -51,6 +48,9 @@ class Fixer {
       throw new Error("Please, provide selector or node to add new Fixer element");
     }
 
+    this.updateStacks();
+    this.onScroll(getScrolledPosition());
+
     return this;
   }
 
@@ -58,15 +58,15 @@ class Fixer {
    * Function listening scroll.
    * @param {Scrolled} scrolled Document scrolled values in pixels
    */
-  listenScroll (scrolled) {
+  onScroll (scrolled) {
     let i = this.elements.length;
 
     while (i--) {
       let element = this.elements[i];
-      let stackHeight = this.getStackHeight(element);
+      let stackHeight = element.stackOffset;
 
       if (element.position == "top") {
-        if (element.offset.top <= scrolled.top + stackHeight && element.fixed === false) {
+        if (element.fixed === false && element.offset.top <= scrolled.top + stackHeight) {
           element.fix(stackHeight);
         }
         else if (element.offset.top >= scrolled.top + stackHeight) {
@@ -74,12 +74,33 @@ class Fixer {
         }
       }
       else if (element.position == "bottom") {
-        if (element.offset.bottom >= scrolled.top - stackHeight + document.documentElement.offsetHeight && element.fixed === false) {
+        if (element.fixed === false && element.offset.bottom >= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
           element.fix(stackHeight);
         }
         else if (element.offset.bottom <= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
           element.unFix();
         }
+      }
+    }
+  }
+
+  /**
+   * Update stackOffset property of every element and re-fix some element if needed.
+   */
+  updateStacks () {
+    let i = this.elements.length;
+
+    while (i--) {
+      let element = this.elements[i];
+      let scrolled = getScrolledPosition();
+
+      element.stackOffset = this.getStackHeight(element);
+      
+      if (element.offset.bottom >= scrolled.top - element.stackOffset + document.documentElement.offsetHeight) {
+        element.fix(element.stackOffset);
+      }
+      else if (element.offset.bottom <= scrolled.top - element.stackOffset + document.documentElement.offsetHeight) {
+        element.unFix();
       }
     }
   }
@@ -127,8 +148,8 @@ class Fixer {
       }
     }
 
-    // call listenScroll method to check all elements position
-    this.listenScroll(scrolled);
+    // call onScroll method to check all elements position
+    this.onScroll(scrolled);
   };
 }
 
