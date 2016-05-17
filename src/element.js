@@ -58,7 +58,7 @@ export default class Element {
       this.height = this.node.offsetHeight;
 
       // creating placeholder if needed
-      this.placeholder ? this.placeholder = this.createPlaceholder() : null;
+      defaults.placeholder ? this.placeholder = this.createPlaceholder() : null;
     }
   }
 
@@ -69,7 +69,7 @@ export default class Element {
   createPlaceholder () {
     var placeholder = document.createElement('span');
 
-    placeholder.className = this.placeholderClass;
+    placeholder.className = defaults.placeholderClass;
     placeholder.style.width = this.node.offsetWidth + 'px';
     placeholder.style.height = this.node.offsetHeight + 'px';
     placeholder.style.maxWidth = this.styles.maxWidth;
