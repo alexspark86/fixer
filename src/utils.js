@@ -1,6 +1,7 @@
 /**
  * Defining an element
- * @param {string|jQuery|HTMLElement} element
+ * @param {String|jQuery|HTMLElement} element
+ * @return {HTMLElement}
  */
 export function defineElement (element) {
   if (typeof element === 'string') {
@@ -37,9 +38,17 @@ export function calculateStyles (element) {
 }
 
 /**
- * Calculating browser styles for an element
+ * Calculating offsets of the element from each side of the document
  * @param {HTMLElement} element
- * @param {object} styles
+ * @param {Object} styles
+ * 
+ * @typedef {Object} Offset
+ * @property {Number} top
+ * @property {Number} bottom
+ * @property {Number} left
+ * @property {Number} right
+ * 
+ * @return {Offset}
  */
 export function calculateOffset (element, styles) {
   var rect = element.getBoundingClientRect();
@@ -55,11 +64,11 @@ export function calculateOffset (element, styles) {
 /**
  * Getting scrollbar position
  * 
- * @typedef {Object} scrolled
+ * @typedef {Object} Scrolled
  * @property {Number} top
  * @property {Number} left
  * 
- * @return {scrolled}
+ * @return {Scrolled}
  */
 export function getScrolledPosition () {
   return {

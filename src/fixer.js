@@ -1,5 +1,4 @@
 import Element from './element';
-import defaults from './defaults';
 import {getScrolledPosition} from './utils';
 import debounce from 'debounce';
 import throttle from 'throttleit';
@@ -57,7 +56,7 @@ class Fixer {
 
   /**
    * Function listening scroll.
-   * @param {scrolled} scrolled Document scrolled values in pixels
+   * @param {Scrolled} scrolled Document scrolled values in pixels
    */
   listenScroll (scrolled) {
     let i = this.elements.length;
@@ -107,7 +106,7 @@ class Fixer {
 
   /**
    * Recalculate width of the fixed elements (on resize).
-   * @param {scrolled} scrolled Document scrolled height in pixels
+   * @param {Scrolled} scrolled Document scrolled height in pixels
    */
   recalculateElementsWidth (scrolled) {
     let i = this.elements.length;

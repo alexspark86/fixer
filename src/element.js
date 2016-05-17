@@ -1,19 +1,53 @@
 import {defineElement, calculateStyles, calculateOffset} from './utils';
-import defaults from './defaults';
 
+/**
+ * @typedef {Object} defaults
+ * @property {String} position Screen side to fix an element ('top'|'bottom'|'top bottom')
+ * @property {Boolean} placeholder Indicates whether placeholder is needed
+ * @property {string} placeholderClass Classname to generate the placeholder
+ * @property {string} fixedClass Classname to add for a fixed element
+ * @property {HTMLElement|string} limiter Selector or node of the limiter for an element
+ */
+let defaults = {
+  position: 'top',
+  placeholder: true,
+  placeholderClass: 'fixer-placeholder',
+  fixedClass: '_fixed',
+  limiter: null
+};
+
+/**
+ * Class representing an element.
+ * 
+ * @class
+ * @property {String} position Position to fix
+ * @property {HTMLElement} node Node element
+ * @property {HTMLElement} placeholder Placeholder node
+ * @property {HTMLElement} limiter Limiter node
+ * @property {Boolean} fixed Current fixed state
+ * @property {Number} height Element's height
+ * @property {Offset} offset Calculated offsets of the element from each side of the document
+ * @property {Number} stackOffset
+ * @property {Object} styles Saved initial styles
+ */
 export default class Element {
 
+  /**
+   * Create an element.
+   * @param {string|HTMLElement} selector
+   * @param {defaults} options
+   */
   constructor (selector, options) {
-    Object.assign(this, defaults, options);
-    
-    this.fixed = false;
-    
-    // define element and limiters
-    this.node = defineElement(selector);
-    this.limiter = defineElement(this.limiter);
+    Object.assign(defaults, options);
+
+    Object.assign(this, {
+        node: defineElement(selector),
+        limiter: defineElement(defaults.limiter),
+        position: defaults.position,
+        fixed: false
+      });
 
     if (this.node && this.node.tagName) {
-
       // saving styles of element
       this.styles = calculateStyles(this.node);
 
@@ -28,6 +62,10 @@ export default class Element {
     }
   }
 
+  /**
+   * Create placeholder node.
+   * @return {HTMLElement}
+   */
   createPlaceholder () {
     var placeholder = document.createElement('span');
 
@@ -46,11 +84,13 @@ export default class Element {
 
     this.node.parentNode.insertBefore(placeholder, this.node.nextSibling);
 
-    delete this.placeholderClass;
-
     return placeholder;
   }
 
+  /**
+   * Fix an element's node.
+   * @param {number} offset
+   */
   fix (offset) {
     var element = this.node;
     var placeholder = this.placeholder;
@@ -60,11 +100,11 @@ export default class Element {
     element.style[this.position] = offset + 'px';
     element.style.zIndex = this.styles.zIndex == 'auto' ? '100' : this.styles.zIndex;
 
-    if (document.documentElement.classList && !element.classList.contains(this.fixedClass)) {
-      element.classList.add(this.fixedClass);
+    if (document.documentElement.classList && !element.classList.contains(defaults.fixedClass)) {
+      element.classList.add(defaults.fixedClass);
     }
-    else if (element.className.indexOf(this.fixedClass) == -1) {
-      element.className += ' ' + this.fixedClass;
+    else if (element.className.indexOf(defaults.fixedClass) == -1) {
+      element.className += ' ' + defaults.fixedClass;
     }
 
     if (this.styles.float !== 'none') {
@@ -83,6 +123,9 @@ export default class Element {
     this.fixed = true;
   }
 
+  /**
+   * Unfix an element's node (return its state to initial) and update properties.
+   */
   unFix () {
     var element = this.node;
     var placeholder = this.placeholder;
@@ -94,9 +137,9 @@ export default class Element {
     element.style.marginTop = this.styles.marginTop;
 
     if (document.documentElement.classList) {
-      element.classList.remove(this.fixedClass)
+      element.classList.remove(defaults.fixedClass)
     } else {
-      element.className = element.className.replace(this.fixedClass, '');
+      element.className = element.className.replace(defaults.fixedClass, '');
     }
 
     if (placeholder) {
@@ -106,10 +149,16 @@ export default class Element {
     this.fixed = false;
   };
 
+  /**
+   * Hide node of an element.
+   */
   hide () {
     this.node.style.display = 'none';
   }
 
+  /**
+   * Show node of an element (return its initial display style).
+   */
   show () {
     this.node.style.display = this.styles.display;
   }
