@@ -5,6 +5,7 @@ import throttle from 'throttleit';
 
 /**
  * Class representing a fixer.
+ * @class
  */
 class Fixer {
 
@@ -68,7 +69,7 @@ class Fixer {
    * Function to fix/unFix an element.
    * @param {Element} element Element instance
    * @param {Scrolled} scrolled Document scrolled values in pixels
-   * @param {Boolean=} forceFix
+   * @param {Boolean=} forceFix Option to fix an element even if it fixed
    */
   static fixToggle (element, scrolled, forceFix) {
     forceFix = forceFix || !element.fixed;
