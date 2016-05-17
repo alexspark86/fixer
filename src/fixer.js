@@ -61,27 +61,37 @@ class Fixer {
   onScroll (scrolled) {
     let i = this.elements.length;
 
-    while (i--) {
-      let element = this.elements[i];
-      let stackHeight = element.stackOffset;
+    while (i--) Fixer.fixToggle(this.elements[i], scrolled);
+  }
 
-      if (element.position == "top") {
-        if (element.fixed === false && element.offset.top <= scrolled.top + stackHeight) {
-          element.fix(stackHeight);
-        }
-        else if (element.offset.top >= scrolled.top + stackHeight) {
-          element.unFix();
-        }
+  /**
+   * Function to fix/unFix an element.
+   * @param {Element} element Element instance
+   * @param {Scrolled} scrolled Document scrolled values in pixels
+   * @param {Boolean=} forceFix
+   */
+  static fixToggle (element, scrolled, forceFix) {
+    forceFix = forceFix || !element.fixed;
+
+    let stackHeight = element.stackOffset;
+
+    if (element.position == "top") {
+      if (forceFix && element.offset.top <= scrolled.top + stackHeight) {
+        element.fix(stackHeight);
       }
-      else if (element.position == "bottom") {
-        if (element.fixed === false && element.offset.bottom >= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
-          element.fix(stackHeight);
-        }
-        else if (element.offset.bottom <= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
-          element.unFix();
-        }
+      else if (element.offset.top >= scrolled.top + stackHeight) {
+        element.unFix();
       }
     }
+    else if (element.position == "bottom") {
+      if (forceFix && element.offset.bottom >= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
+        element.fix(stackHeight);
+      }
+      else if (element.offset.bottom <= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
+        element.unFix();
+      }
+    }
+
   }
 
   /**
@@ -92,16 +102,12 @@ class Fixer {
 
     while (i--) {
       let element = this.elements[i];
-      let scrolled = getScrolledPosition();
 
+      // update stackOffset for an element
       element.stackOffset = this.getStackHeight(element);
-      
-      if (element.offset.bottom >= scrolled.top - element.stackOffset + document.documentElement.offsetHeight) {
-        element.fix(element.stackOffset);
-      }
-      else if (element.offset.bottom <= scrolled.top - element.stackOffset + document.documentElement.offsetHeight) {
-        element.unFix();
-      }
+
+      // re-fix element if needed
+      Fixer.fixToggle(element, getScrolledPosition(), true);
     }
   }
 
