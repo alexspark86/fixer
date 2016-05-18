@@ -58,7 +58,7 @@ export default class Element {
       this.height = this.node.offsetHeight;
 
       // creating placeholder if needed
-      defaults.placeholder ? this.placeholder = this.createPlaceholder() : null;
+      this.placeholder = defaults.placeholder ? this.createPlaceholder() : null;
     }
   }
 
@@ -92,8 +92,7 @@ export default class Element {
    * @param {number} offset
    */
   fix (offset) {
-    var element = this.node;
-    var placeholder = this.placeholder;
+    let {node: element, placeholder} = this;
 
     element.style.width = this.styles.width;  // set width before change position
     element.style.position = 'fixed';
@@ -111,11 +110,6 @@ export default class Element {
       element.style.left = this.offset.left - parseInt(this.styles.marginLeft) + 'px';
     }
 
-    if (this.centering) {
-      element.style.left = 0;
-      element.style.right = 0;
-    }
-
     if (placeholder) {
       placeholder.style.display = this.styles.display;
     }
@@ -127,8 +121,7 @@ export default class Element {
    * Unfix an element's node (return its state to initial) and update properties.
    */
   unFix () {
-    var element = this.node;
-    var placeholder = this.placeholder;
+    let {node: element, placeholder} = this;
 
     element.style.width = '';  // set width before change position
     element.style.position = this.styles.position;
