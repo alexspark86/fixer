@@ -71,10 +71,8 @@ class Fixer {
    * @param {Scrolled} scrolled Document scrolled values in pixels
    * @param {Boolean=} forceFix Option to fix an element even if it fixed
    */
-  static fixToggle (element, scrolled, forceFix) {
+  static fixToggle (element, scrolled, forceFix = !element.fixed) {
     requestAnimationFrame(function () {
-      forceFix = forceFix || !element.fixed;
-
       let stackHeight = element.stackOffset;
 
       if (element.position == "top") {
@@ -121,10 +119,9 @@ class Fixer {
   getStackHeight (element) {
     let sum = 0;
     let i = this.elements.length;
-    let item;
 
     while (i--) {
-      item = this.elements[i];
+      let item = this.elements[i];
 
       if (element.position === item.position && (element.position === "top" ? item.offset.top < element.offset.top : item.offset.bottom > element.offset.bottom)) {
         sum += item.height || 0;
@@ -140,10 +137,9 @@ class Fixer {
    */
   recalculateElementsWidth (scrolled) {
     let i = this.elements.length;
-    let item;
 
     while (i--) {
-      item = this.elements[i];
+      let item = this.elements[i];
 
       if (
         item.fixed &&                   // if element is fixed
