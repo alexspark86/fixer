@@ -72,26 +72,28 @@ class Fixer {
    * @param {Boolean=} forceFix Option to fix an element even if it fixed
    */
   static fixToggle (element, scrolled, forceFix) {
-    forceFix = forceFix || !element.fixed;
+    requestAnimationFrame(function () {
+      forceFix = forceFix || !element.fixed;
 
-    let stackHeight = element.stackOffset;
+      let stackHeight = element.stackOffset;
 
-    if (element.position == "top") {
-      if (forceFix && element.offset.top <= scrolled.top + stackHeight) {
-        element.fix(stackHeight);
+      if (element.position == "top") {
+        if (forceFix && element.offset.top <= scrolled.top + stackHeight) {
+          element.fix(stackHeight);
+        }
+        else if (element.offset.top >= scrolled.top + stackHeight) {
+          element.unFix();
+        }
       }
-      else if (element.offset.top >= scrolled.top + stackHeight) {
-        element.unFix();
+      else if (element.position == "bottom") {
+        if (forceFix && element.offset.bottom >= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
+          element.fix(stackHeight);
+        }
+        else if (element.offset.bottom <= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
+          element.unFix();
+        }
       }
-    }
-    else if (element.position == "bottom") {
-      if (forceFix && element.offset.bottom >= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
-        element.fix(stackHeight);
-      }
-      else if (element.offset.bottom <= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
-        element.unFix();
-      }
-    }
+    });
 
   }
 
