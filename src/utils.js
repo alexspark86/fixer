@@ -1,6 +1,6 @@
 /**
  * Defining an element
- * @param {String|jQuery|HTMLElement} element
+ * @param {String|jQuery|HTMLElement|Function} element
  * @return {HTMLElement}
  */
 export function defineElement (element) {

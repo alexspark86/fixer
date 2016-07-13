@@ -4,11 +4,11 @@ import {defineElement, calculateStyles, calculateOffset} from './utils';
  * @typedef {Object} defaults
  * @property {String} position Screen side to fix an element ('top'|'bottom'|'top bottom')
  * @property {Boolean} placeholder Indicates whether placeholder is needed
- * @property {string} placeholderClass Classname to generate the placeholder
- * @property {string} fixedClass Classname to add for a fixed element
- * @property {HTMLElement|string} limiter Selector or node of the limiter for an element
+ * @property {String} placeholderClass Classname to generate the placeholder
+ * @property {String} fixedClass Classname to add for a fixed element
+ * @property {HTMLElement|String|Function} limiter Selector or node of the limiter for an element
  */
-let defaults = {
+const DEFAULTS = {
   position: 'top',
   placeholder: true,
   placeholderClass: 'fixer-placeholder',
@@ -20,6 +20,7 @@ let defaults = {
  * Class representing an element.
  * 
  * @class
+ * @property {defaults} options Custom options for an element, extends DEFAULTS with initial options
  * @property {String} position Position to fix
  * @property {HTMLElement} node Node element
  * @property {HTMLElement} placeholder Placeholder node
@@ -38,14 +39,14 @@ export default class Element {
    * @param {defaults} options
    */
   constructor (selector, options) {
-    Object.assign(defaults, options);
-
+    Object.assign(this.options = {}, DEFAULTS, options);
+    
     Object.assign(this, {
-        node: defineElement(selector),
-        limiter: defineElement(defaults.limiter),
-        position: defaults.position,
-        fixed: false
-      });
+      node: defineElement(selector),
+      limiter: defineElement(this.options.limiter),
+      position: this.options.position,
+      fixed: false
+    });
 
     if (this.node && this.node.tagName) {
       // saving styles of element
@@ -58,7 +59,7 @@ export default class Element {
       this.height = this.node.offsetHeight;
 
       // creating placeholder if needed
-      this.placeholder = defaults.placeholder ? this.createPlaceholder() : null;
+      this.placeholder = this.options.placeholder ? this.createPlaceholder() : null;
     }
   }
 
@@ -69,7 +70,7 @@ export default class Element {
   createPlaceholder () {
     var placeholder = document.createElement('span');
 
-    placeholder.className = defaults.placeholderClass;
+    placeholder.className = this.options.placeholderClass;
     placeholder.style.width = this.node.offsetWidth + 'px';
     placeholder.style.height = this.node.offsetHeight + 'px';
     placeholder.style.maxWidth = this.styles.maxWidth;
@@ -99,11 +100,11 @@ export default class Element {
     element.style[this.position] = offset + 'px';
     element.style.zIndex = this.styles.zIndex == 'auto' ? '100' : this.styles.zIndex;
 
-    if (document.documentElement.classList && !element.classList.contains(defaults.fixedClass)) {
-      element.classList.add(defaults.fixedClass);
+    if (document.documentElement.classList && !element.classList.contains(this.options.fixedClass)) {
+      element.classList.add(this.options.fixedClass);
     }
-    else if (element.className.indexOf(defaults.fixedClass) == -1) {
-      element.className += ' ' + defaults.fixedClass;
+    else if (element.className.indexOf(this.options.fixedClass) == -1) {
+      element.className += ' ' + this.options.fixedClass;
     }
 
     if (this.styles.float !== 'none') {
@@ -130,9 +131,9 @@ export default class Element {
     element.style.marginTop = this.styles.marginTop;
 
     if (document.documentElement.classList) {
-      element.classList.remove(defaults.fixedClass)
+      element.classList.remove(this.options.fixedClass)
     } else {
-      element.className = element.className.replace(defaults.fixedClass, '');
+      element.className = element.className.replace(this.options.fixedClass, '');
     }
 
     if (placeholder) {
