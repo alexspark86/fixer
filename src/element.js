@@ -95,10 +95,12 @@ export default class Element {
   fix (offset) {
     let {node: element, placeholder} = this;
 
-    element.style.width = this.styles.width;  // set width before change position
-    element.style.position = 'fixed';
-    element.style[this.position] = offset + 'px';
-    element.style.zIndex = this.styles.zIndex == 'auto' ? '100' : this.styles.zIndex;
+    Object.assign(element.style, {
+      position: 'fixed',
+      [this.position]: offset + 'px',
+      zIndex: this.styles.zIndex == 'auto' ? '100' : this.styles.zIndex,
+      width: this.styles.width
+    });
 
     if (document.documentElement.classList && !element.classList.contains(this.options.fixedClass)) {
       element.classList.add(this.options.fixedClass);
@@ -124,11 +126,13 @@ export default class Element {
   unFix () {
     let {node: element, placeholder} = this;
 
-    element.style.width = '';  // set width before change position
-    element.style.position = this.styles.position;
-    element.style.top = this.styles.top;
-    element.style.zIndex = this.styles.zIndex;
-    element.style.marginTop = this.styles.marginTop;
+    Object.assign(element.style, {
+      position: this.styles.position,
+      [this.position]: this.styles[this.position],
+      zIndex: this.styles.zIndex,
+      marginTop: this.styles.marginTop,
+      width: ''
+    });
 
     if (document.documentElement.classList) {
       element.classList.remove(this.options.fixedClass)
