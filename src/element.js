@@ -68,20 +68,23 @@ export default class Element {
    * @return {HTMLElement}
    */
   createPlaceholder () {
-    var placeholder = document.createElement('span');
+    let placeholder = document.createElement('span');
 
     placeholder.className = this.options.placeholderClass;
-    placeholder.style.width = this.node.offsetWidth + 'px';
-    placeholder.style.height = this.node.offsetHeight + 'px';
-    placeholder.style.maxWidth = this.styles.maxWidth;
-    placeholder.style.marginTop = this.styles.marginTop;
-    placeholder.style.marginRight = this.styles.marginRight;
-    placeholder.style.marginBottom = this.styles.marginBottom;
-    placeholder.style.marginLeft = this.styles.marginLeft;
-    placeholder.style.float = this.styles.float;
-    placeholder.style.clear = this.styles.clear;
-    placeholder.style.zIndex = '-1'; // for buggy Safari
-    placeholder.style.display = 'none';
+
+    Object.assign(placeholder.style, {
+      zIndex: '-1', // for buggy Safari
+      float: this.styles.float,
+      clear: this.styles.clear,
+      display: 'none',
+      marginTop: this.styles.marginTop,
+      marginRight: this.styles.marginRight,
+      marginBottom: this.styles.marginBottom,
+      marginLeft: this.styles.marginLeft,
+      width: this.node.offsetWidth + 'px',
+      height: this.node.offsetHeight + 'px',
+      maxWidth: this.styles.maxWidth
+    });
 
     this.node.parentNode.insertBefore(placeholder, this.node.nextSibling);
 
