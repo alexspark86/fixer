@@ -39,8 +39,10 @@ export default class Element {
    * @param {defaults} options
    */
   constructor (selector, options) {
+    // extend element's options with initial- and default-options
     Object.assign(this.options = {}, DEFAULTS, options);
-    
+
+    // init basic parameters
     Object.assign(this, {
       node: defineElement(selector),
       limiter: defineElement(this.options.limiter),
