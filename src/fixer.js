@@ -1,7 +1,15 @@
 import Element from "./element";
-import {getScrolledPosition} from "./utils";
+import {defineElement, getScrolledPosition} from "./utils";
 import debounce from "debounce";
 import throttle from "throttleit";
+
+/**
+ * @typedef {Object} defaults
+ * @property {HTMLElement|String} Selector or node of root container for a fixer instance
+ */
+var DEFAULTS = {
+  container: document.documentElement
+};
 
 /**
  * Class representing a fixer.
@@ -11,25 +19,44 @@ class Fixer {
 
   /**
    * Create fixer.
+   * @param {HTMLElement|String=} container
    */
-  constructor () {
+  constructor (container) {
+    // define root container for a fixer instance
+    this.container = defineElement(container || DEFAULTS.container);
+
     // array of the registered elements to fix
     this.elements = [];
 
-    // listen to the page load and scroll
-    let onScroll = throttle(() => this.onScroll(getScrolledPosition()), 16);
-    window.addEventListener("scroll", onScroll);
-    window.addEventListener("load", onScroll);
+    this.initListeners();
+  }
 
-    // listen to the page resize and recalculate elements width
-    let onResize = debounce(() => this.recalculateElementsWidth(getScrolledPosition()), 100);
+  /**
+   * Init listeners for a container and window.
+   */
+  initListeners () {
+    var container = this.container;
+
+    if (container === DEFAULTS.container) {
+      container = window;
+    }
+
+    // onScroll and onResize functions
+    let onScroll = throttle(() => this.onScroll(getScrolledPosition(this.container)), 16);
+    let onResize = debounce(() => this.recalculateElementsWidth(getScrolledPosition(this.container)), 100);
+
+    // listen for container scroll
+    container.addEventListener("scroll", onScroll);
+
+    // listen for window load and resize
+    window.addEventListener("load", onScroll);
     window.addEventListener("resize", onResize);
   }
 
   /**
    * Adding an element to Fixer.
    * @param {String|HTMLElement|jQuery} selector
-   * @param {defaults=} options
+   * @param {elementDefaults=} options
    * @return {Fixer}
    */
   addElement (selector, options) {
@@ -68,7 +95,7 @@ class Fixer {
   onScroll (scrolled) {
     let i = this.elements.length;
 
-    while (i--) Fixer.fixToggle(this.elements[i], scrolled);
+    while (i--) this.fixToggle(this.elements[i], scrolled);
   }
 
   /**
@@ -77,27 +104,25 @@ class Fixer {
    * @param {Scrolled} scrolled Document scrolled values in pixels
    * @param {Boolean=} forceFix Option to fix an element even if it fixed
    */
-  static fixToggle (element, scrolled, forceFix = !element.fixed) {
-    requestAnimationFrame(function () {
-      let stackHeight = element.stackOffset;
+  fixToggle (element, scrolled, forceFix = !element.fixed) {
+    let stackHeight = element.stackOffset;
 
-      if (element.position === "top") {
-        if (forceFix && element.offset.top <= scrolled.top + stackHeight) {
-          element.fix(stackHeight);
-        }
-        else if (element.offset.top >= scrolled.top + stackHeight) {
-          element.unFix();
-        }
+    if (element.position === "top") {
+      if (forceFix && element.offset.top <= scrolled.top + stackHeight) {
+        element.fix(stackHeight);
       }
-      else if (element.position === "bottom") {
-        if (forceFix && element.offset.bottom >= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
-          element.fix(stackHeight);
-        }
-        else if (element.offset.bottom <= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
-          element.unFix();
-        }
+      else if (element.offset.top >= scrolled.top + stackHeight) {
+        element.unFix();
       }
-    });
+    }
+    else if (element.position === "bottom") {
+      if (forceFix && element.offset.bottom >= scrolled.top - stackHeight + this.container.offsetHeight) {
+        element.fix(stackHeight);
+      }
+      else if (element.offset.bottom <= scrolled.top - stackHeight + this.container.offsetHeight) {
+        element.unFix();
+      }
+    }
 
   }
 
@@ -114,7 +139,7 @@ class Fixer {
       element.stackOffset = this.getStackHeight(element);
 
       // re-fix element if needed
-      Fixer.fixToggle(element, getScrolledPosition(), true);
+      this.fixToggle(element, getScrolledPosition(this.container), true);
     }
   }
 

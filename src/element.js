@@ -2,7 +2,7 @@ import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, rem
 import objectAssign from "object-assign";
 
 /**
- * @typedef {Object} defaults
+ * @typedef {Object} elementDefaults
  * @property {String} position Screen side to fix an element ("top"|"bottom")
  * @property {Boolean} placeholder Indicates whether placeholder is needed
  * @property {String} placeholderClass Classname to generate the placeholder
@@ -21,7 +21,7 @@ const DEFAULTS = {
  * Class representing an element.
  * 
  * @class
- * @property {defaults} options Custom options for an element, extends DEFAULTS with initial options
+ * @property {elementDefaults} options Custom options for an element, extends DEFAULTS with initial options
  * @property {String} position Position to fix
  * @property {HTMLElement} node Node element
  * @property {HTMLElement} placeholder Placeholder node
@@ -37,7 +37,7 @@ export default class Element {
   /**
    * Create an element.
    * @param {string|HTMLElement} selector
-   * @param {defaults} options
+   * @param {elementDefaults} options
    */
   constructor (selector, options) {
     // extend element's options with initial- and default-options

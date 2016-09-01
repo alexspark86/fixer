@@ -73,12 +73,15 @@ export function calculateOffset (element, styles) {
  * @property {Number} top
  * @property {Number} left
  *
+ * @param {HTMLElement} container
  * @return {Scrolled}
  */
-export function getScrolledPosition () {
+export function getScrolledPosition (container) {
+  let isDocument = container === document.documentElement;
+
   return {
-    top: window.pageYOffset || document.documentElement.scrollTop,
-    left: window.pageXOffset || document.documentElement.scrollLeft
+    top: isDocument ? (window.pageYOffset || document.documentElement.scrollTop) : container.scrollTop,
+    left: isDocument ? (window.pageXOffset || document.documentElement.scrollLeft) : container.scrollLeft
   }
 }
 
