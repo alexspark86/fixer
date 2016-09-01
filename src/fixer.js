@@ -39,7 +39,13 @@ class Fixer {
       element = new Element(selector, options);
 
       if (element.node && element.node.tagName) {
+        // add new element to array
         this.elements.push(element);
+
+        // sort elements array by top-offset for correct calculation of limit on scrolling
+        this.elements.sort(function (a, b) {
+          return a.offset.top - b.offset.top;
+        });
       }
       else {
         throw new Error("Can't add element '" + selector);
@@ -49,8 +55,8 @@ class Fixer {
       throw new Error("Please, provide selector or node to add new Fixer element");
     }
 
+    // update stacks
     this.updateStacks();
-    this.onScroll(getScrolledPosition());
 
     return this;
   }
