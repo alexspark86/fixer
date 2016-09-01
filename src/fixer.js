@@ -1,7 +1,7 @@
-import Element from './element';
-import {getScrolledPosition} from './utils';
-import debounce from 'debounce';
-import throttle from 'throttleit';
+import Element from "./element";
+import {getScrolledPosition} from "./utils";
+import debounce from "debounce";
+import throttle from "throttleit";
 
 /**
  * Class representing a fixer.
@@ -18,12 +18,12 @@ class Fixer {
 
     // listen to the page load and scroll
     let onScroll = throttle(() => this.onScroll(getScrolledPosition()), 16);
-    window.addEventListener('scroll', onScroll);
-    window.addEventListener('load', onScroll);
+    window.addEventListener("scroll", onScroll);
+    window.addEventListener("load", onScroll);
 
     // listen to the page resize and recalculate elements width
     let onResize = debounce(() => this.recalculateElementsWidth(getScrolledPosition()), 100);
-    window.addEventListener('resize', onResize);
+    window.addEventListener("resize", onResize);
   }
 
   /**
@@ -75,7 +75,7 @@ class Fixer {
     requestAnimationFrame(function () {
       let stackHeight = element.stackOffset;
 
-      if (element.position == "top") {
+      if (element.position === "top") {
         if (forceFix && element.offset.top <= scrolled.top + stackHeight) {
           element.fix(stackHeight);
         }
@@ -83,7 +83,7 @@ class Fixer {
           element.unFix();
         }
       }
-      else if (element.position == "bottom") {
+      else if (element.position === "bottom") {
         if (forceFix && element.offset.bottom >= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
           element.fix(stackHeight);
         }
@@ -149,7 +149,7 @@ class Fixer {
       ) {
         // TODO: check calculating of width with different css box-sizing values
         // set the value of an element width equal to the width its placeholder
-        item.node.style.width = item.placeholder.offsetWidth - item.styles.paddingLeft - item.styles.paddingRight + 'px';
+        item.node.style.width = item.placeholder.offsetWidth - item.styles.paddingLeft - item.styles.paddingRight + "px";
       }
     }
 

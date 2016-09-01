@@ -1,19 +1,20 @@
-import {defineElement, calculateStyles, calculateOffset} from './utils';
+import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, removeClass} from "./utils";
+import objectAssign from "object-assign";
 
 /**
  * @typedef {Object} defaults
- * @property {String} position Screen side to fix an element ('top'|'bottom'|'top bottom')
+ * @property {String} position Screen side to fix an element ("top"|"bottom")
  * @property {Boolean} placeholder Indicates whether placeholder is needed
  * @property {String} placeholderClass Classname to generate the placeholder
  * @property {String} fixedClass Classname to add for a fixed element
- * @property {HTMLElement|String|Function} limiter Selector or node of the limiter for an element
+ * @property {HTMLElement|String|Function} limit Selector or node of the limiter for an element
  */
 const DEFAULTS = {
-  position: 'top',
+  position: "top",
   placeholder: true,
-  placeholderClass: 'fixer-placeholder',
-  fixedClass: '_fixed',
-  limiter: null
+  placeholderClass: "fixer-placeholder",
+  fixedClass: "_fixed",
+  limit: null
 };
 
 /**
@@ -40,12 +41,12 @@ export default class Element {
    */
   constructor (selector, options) {
     // extend element's options with initial- and default-options
-    Object.assign(this.options = {}, DEFAULTS, options);
+    objectAssign(this.options = {}, DEFAULTS, options);
 
     // init basic parameters
-    Object.assign(this, {
+    objectAssign(this, {
       node: defineElement(selector),
-      limiter: defineElement(this.options.limiter),
+      limit: defineElement(this.options.limit),
       position: this.options.position,
       fixed: false
     });
@@ -70,21 +71,21 @@ export default class Element {
    * @return {HTMLElement}
    */
   createPlaceholder () {
-    let placeholder = document.createElement('span');
+    let placeholder = document.createElement("span");
 
     placeholder.className = this.options.placeholderClass;
 
-    Object.assign(placeholder.style, {
-      zIndex: '-1', // for buggy Safari
+    setStyle(placeholder, {
+      zIndex: "-1", // for buggy Safari
       float: this.styles.float,
       clear: this.styles.clear,
-      display: 'none',
+      display: "none",
       marginTop: this.styles.marginTop,
       marginRight: this.styles.marginRight,
       marginBottom: this.styles.marginBottom,
       marginLeft: this.styles.marginLeft,
-      width: this.node.offsetWidth + 'px',
-      height: this.node.offsetHeight + 'px',
+      width: this.node.offsetWidth + "px",
+      height: this.node.offsetHeight + "px",
       maxWidth: this.styles.maxWidth
     });
 
@@ -100,28 +101,31 @@ export default class Element {
   fix (offset) {
     let {node: element, placeholder} = this;
 
-    Object.assign(element.style, {
-      position: 'fixed',
-      [this.position]: offset + 'px',
-      zIndex: this.styles.zIndex == 'auto' ? '100' : this.styles.zIndex,
+    // set styles for an element node
+    let cssProperties = {
+      position: "fixed",
+      [this.position]: offset + "px",
+      zIndex: this.styles.zIndex === "auto" ? "100" : this.styles.zIndex,
       width: this.styles.width
-    });
+    };
 
-    if (document.documentElement.classList && !element.classList.contains(this.options.fixedClass)) {
-      element.classList.add(this.options.fixedClass);
-    }
-    else if (element.className.indexOf(this.options.fixedClass) == -1) {
-      element.className += ' ' + this.options.fixedClass;
+    if (this.styles.float !== "none") {
+      cssProperties.left = this.offset.left - parseInt(this.styles.marginLeft) + "px";
     }
 
-    if (this.styles.float !== 'none') {
-      element.style.left = this.offset.left - parseInt(this.styles.marginLeft) + 'px';
-    }
+    setStyle(element, cssProperties);
 
+    // set styles for placeholder node
     if (placeholder) {
-      placeholder.style.display = this.styles.display;
+      setStyle(placeholder, {
+        display: this.styles.display
+      });
     }
 
+    // add fixed className for an element node
+    addClass(element, this.options.fixedClass);
+
+    // update fixed state for the instance of an element
     this.fixed = true;
   }
 
@@ -131,23 +135,21 @@ export default class Element {
   unFix () {
     let {node: element, placeholder} = this;
 
-    Object.assign(element.style, {
+    setStyle(element, {
       position: this.styles.position,
       [this.position]: this.styles[this.position],
       zIndex: this.styles.zIndex,
       marginTop: this.styles.marginTop,
-      width: ''
+      width: ""
     });
 
-    if (document.documentElement.classList) {
-      element.classList.remove(this.options.fixedClass)
-    } else {
-      element.className = element.className.replace(this.options.fixedClass, '');
+    if (placeholder) {
+      setStyle(placeholder, {
+        display: "none"
+      });
     }
 
-    if (placeholder) {
-      placeholder.style.display = 'none';
-    }
+    removeClass(element, this.options.fixedClass);
 
     this.fixed = false;
   };
@@ -156,13 +158,13 @@ export default class Element {
    * Hide node of an element.
    */
   hide () {
-    this.node.style.display = 'none';
+    setStyle(this.node, {display: "none"});
   }
 
   /**
    * Show node of an element (return its initial display style).
    */
   show () {
-    this.node.style.display = this.styles.display;
+    setStyle(this.node, {display: this.styles.display});
   }
 }
