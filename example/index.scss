@@ -58,6 +58,19 @@ html, body {
   height: 100px;
 }
 
+.row {
+  display: flex;
+  flex-direction: row;
+
+  &__col {
+    position: relative;
+
+    &:nth-child(2n) {
+      padding-left: 20px;
+    }
+  }
+}
+
 /* Debug styles */
 ._fixed {
   background-color: rgba(255,255,0, 0.5);
