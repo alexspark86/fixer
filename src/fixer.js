@@ -4,7 +4,6 @@ import debounce from "debounce";
 import throttle from "throttleit";
 
 let documentHeight = document.documentElement.offsetHeight;
-let lastScroll = getScrolledPosition().top;
 
 /**
  * Class representing a fixer.
@@ -70,26 +69,16 @@ class Fixer {
    * @param {Boolean=} forceFix Option to fix elements even if they're fixed
    */
   onScroll (scrolled, forceFix) {
-    // check scroll direction
-    let scrollDown = scrolled.top > lastScroll;
-    lastScroll = scrolled.top;
-
     // check document height (needs to update element values if the document height has dynamically changed)
     this.checkDocumentHeight();
 
-    // Choose iteration method depending on scroll direction.
-    // Shuffling elements in the reverse scrolling direction to avoid fixing elements, which are the limits.
-    //
-    // REWRITE: the better solution is to calculate limits offsets BEFORE execute fixToggle function (in a separate function).
-    if (scrollDown) {
-      for (let i = 0, max = this.elements.length; i < max; i += 1)
-        this.fixToggle(this.elements[i], scrolled, forceFix);
+    // update offsets of limits before fix/unFix elements (to prevent fix limit of each element before it offset was calculated)
+    let i = this.elements.length;
+    while (i--) this.elements[i].updateLimit();
 
-    } else {
-      let i = this.elements.length;
-      while (i--) this.fixToggle(this.elements[i], scrolled, forceFix);
-
-    }
+    // iterate trough the elements to fix/unFix
+    i = this.elements.length;
+    while (i--) this.fixToggle(this.elements[i], scrolled, forceFix);
   }
 
   /**
@@ -99,9 +88,6 @@ class Fixer {
    * @param {Boolean=} [forceFix = element.state === STATE.default] Option to fix an element even if it fixed
    */
   fixToggle (element, scrolled, forceFix = element.state === STATE.default) {
-    // update limit offset
-    element.updateLimit();
-
     // get values for an element
     let offset = element.offset;
     let limit = element.limit;
