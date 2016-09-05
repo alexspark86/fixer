@@ -84,7 +84,7 @@ class Fixer {
   fixToggle (element, scrolled, forceFix = element.state === STATE.default) {
     let offset = element.offset;
     let limit = element.getLimit();
-    let stack = this.getStackHeight(element);
+    let stack = this.getStackHeight(element, scrolled);
     let limitDiff = limit !== null ? limit - (scrolled.top + element.node.offsetHeight + stack) : null;
 
     let needToFix = element.options.position === POSITION.top ? offset.top <= scrolled.top + stack : offset.bottom >= scrolled.top - stack + document.documentElement.offsetHeight;
@@ -105,8 +105,9 @@ class Fixer {
   /**
    * Get stack height for an element.
    * @param {Element} element
+   * * @param {Scrolled} scrolled Document scrolled values in pixels
    */
-  getStackHeight (element) {
+  getStackHeight (element, scrolled) {
     let sum = 0;
     let i = this.elements.length;
 
@@ -117,7 +118,7 @@ class Fixer {
         let itemOnTheWay = element.options.position === POSITION.top ? item.offset.top < element.offset.top : item.offset.top > element.offset.bottom;
 
         if (itemOnTheWay) {
-          let willHideByLimit = item.limit !== null && (element.options.position === POSITION.top ? item.limit <= element.offset.top : item.limit >= element.offset.bottom);
+          let willHideByLimit = item.limit !== null && (element.options.position === POSITION.top ? item.limit <= element.offset.top + scrolled.top : item.limit >= element.offset.bottom);
 
           if (!willHideByLimit)
             sum += item.node.offsetHeight || 0;
