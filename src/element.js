@@ -139,6 +139,8 @@ export default class Element {
       position: "fixed",
       [this.options.position]: offset + "px",
       zIndex: this.styles.zIndex === "auto" ? "100" : this.styles.zIndex,
+      marginTop: 0,
+      marginBottom: 0,
       width: this.styles.width
     };
 
@@ -174,6 +176,7 @@ export default class Element {
       [this.options.position]: this.styles[this.options.position],
       zIndex: this.styles.zIndex,
       marginTop: this.styles.marginTop,
+      marginBottom: this.styles.marginBottom,
       width: ""
     });
 
@@ -206,6 +209,8 @@ export default class Element {
       bottom: "auto",
       right: "auto",
       zIndex: this.styles.zIndex === "auto" ? "100" : this.styles.zIndex,
+      marginTop: 0,
+      marginBottom: 0,
       width: this.styles.width
     });
 
