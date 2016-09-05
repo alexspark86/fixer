@@ -59,10 +59,10 @@ export function calculateOffset (element, styles) {
   var marginTop = styles ? parseInt(styles.marginTop) : 0;
 
   return {
-    top: Math.round(rect.top + scrollTop - marginTop),
-    bottom: Math.round(rect.bottom + scrollTop - marginTop),
-    left: Math.round(rect.left + scrollLeft),
-    right: Math.round(rect.right + scrollLeft)
+    top: rect.top + scrollTop - marginTop,
+    bottom: rect.bottom + scrollTop - marginTop,
+    left: rect.left + scrollLeft,
+    right: rect.right + scrollLeft
   };
 }
 

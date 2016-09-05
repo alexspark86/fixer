@@ -249,7 +249,7 @@ export default class Element {
       value = calculateOffset(limit)[this.options.position];
     }
 
-    value = typeof value === "number" ? Math.round(value) : null;
+    value = typeof value === "number" ? value : null;
 
     this.limit = value;
 
