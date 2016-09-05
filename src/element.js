@@ -2,15 +2,39 @@ import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, rem
 import objectAssign from "object-assign";
 
 /**
+ * Position string values.
+ * @readonly
+ * @enum {string}
+ */
+export const POSITION = {
+  top: "top",
+  bottom: "bottom"
+};
+
+/**
+ * State string values.
+ * @readonly
+ * @enum {string}
+ */
+export const STATE = {
+  default: "default",
+  fixed: "fixed",
+  limited: "limited"
+};
+
+/**
+ * Default element options.
+ * @readonly
+ *
  * @typedef {Object} defaults
  * @property {String} position Screen side to fix an element ("top"|"bottom")
  * @property {Boolean} placeholder Indicates whether placeholder is needed
  * @property {String} placeholderClass Classname to generate the placeholder
  * @property {String} fixedClass Classname to add for a fixed element
- * @property {HTMLElement|String|Function} limit Selector or node of the limiter for an element
+ * @property {HTMLElement|String|Function} limit Selector, node or function of the limit for an element
  */
 const DEFAULTS = {
-  position: "top",
+  position: POSITION.top,
   placeholder: true,
   placeholderClass: "fixer-placeholder",
   fixedClass: "_fixed",
@@ -19,18 +43,20 @@ const DEFAULTS = {
 
 /**
  * Class representing an element.
- * 
  * @class
+ *
  * @property {defaults} options Custom options for an element, extends DEFAULTS with initial options
- * @property {String} position Position to fix
- * @property {HTMLElement} node Node element
- * @property {HTMLElement} placeholder Placeholder node
- * @property {HTMLElement} limiter Limiter node
- * @property {Boolean} fixed Current fixed state
- * @property {Number} height Element's height
- * @property {Offset} offset Calculated offsets of the element from each side of the document
- * @property {Number} stackOffset
- * @property {Object} styles Saved initial styles
+ * @property {STATE} state Current element state
+ *
+ * @property {HTMLElement} node Node of an element
+ * @property {Offset} offset Calculated offsets of an element node from each side of the document
+ * @property {Object} styles Saved initial styles of an element node
+ *
+ * @property {HTMLElement} placeholder Link for placeholder node
+ *
+ * @property {Number} limit Actual limit offset value (top/bottom depending on the position)
+ * @property {HTMLElement} parent Offset parent of an element; needs for properly positioning limited element to the parent
+ *
  */
 export default class Element {
 
@@ -40,29 +66,34 @@ export default class Element {
    * @param {defaults} options
    */
   constructor (selector, options) {
+    options.limit = defineElement(options.limit);
+
     // extend element's options with initial- and default-options
     objectAssign(this.options = {}, DEFAULTS, options);
 
     // init basic parameters
     objectAssign(this, {
+      state: STATE.default,
       node: defineElement(selector),
-      limit: defineElement(this.options.limit),
-      position: this.options.position,
-      fixed: false
+      limit: null,
+      parent: null
     });
 
     if (this.node && this.node.tagName) {
-      // saving styles of element
+      // saving original styles of an element node
       this.styles = calculateStyles(this.node);
 
-      // saving top and left offsets of element
+      // saving original offsets of an element node
       this.offset = calculateOffset(this.node, this.styles);
-
-      // saving element height
-      this.height = this.node.offsetHeight;
 
       // creating placeholder if needed
       this.placeholder = this.options.placeholder ? this.createPlaceholder() : null;
+
+      // calculate limit offset
+      this.limit = this.getLimit();
+
+      // set offset parent of the node
+      this.parent = this.node.offsetParent;
     }
   }
 
@@ -104,7 +135,7 @@ export default class Element {
     // set styles for an element node
     let cssProperties = {
       position: "fixed",
-      [this.position]: offset + "px",
+      [this.options.position]: offset + "px",
       zIndex: this.styles.zIndex === "auto" ? "100" : this.styles.zIndex,
       width: this.styles.width
     };
@@ -125,8 +156,8 @@ export default class Element {
     // add fixed className for an element node
     addClass(element, this.options.fixedClass);
 
-    // update fixed state for the instance of an element
-    this.fixed = true;
+    // set fixed state for the instance of an element
+    this.state = STATE.fixed;
   }
 
   /**
@@ -137,7 +168,7 @@ export default class Element {
 
     setStyle(element, {
       position: this.styles.position,
-      [this.position]: this.styles[this.position],
+      [this.options.position]: this.styles[this.options.position],
       zIndex: this.styles.zIndex,
       marginTop: this.styles.marginTop,
       width: ""
@@ -151,8 +182,79 @@ export default class Element {
 
     removeClass(element, this.options.fixedClass);
 
-    this.fixed = false;
+    this.state = STATE.default;
   };
+
+  /**
+   * Set position absolute with correct coordinates relative to parent to properly fix an element by its limiter.
+   */
+  setAbsolute () {
+    let {node: element, offset, limit, parent, placeholder, styles} = this;
+
+    let parentOffset = calculateOffset(parent);
+    let offsetTop = limit - parentOffset.top - element.offsetHeight;
+    let offsetLeft = offset.left - parentOffset.left - parseInt(this.styles.marginLeft);
+
+    // set styles for an element node
+    setStyle(element, {
+      position: "absolute",
+      top: offsetTop + "px",
+      left: offsetLeft + "px",
+      bottom: "auto",
+      right: "auto",
+      zIndex: this.styles.zIndex === "auto" ? "100" : this.styles.zIndex,
+      width: this.styles.width
+    });
+
+    // set styles for placeholder node
+    if (placeholder) {
+      setStyle(placeholder, {
+        display: styles.display
+      });
+    }
+
+    // add fixed className for an element node
+    addClass(element, this.options.fixedClass);
+
+    this.state = STATE.limited;
+  };
+
+  /**
+   * Get actual value of limit for en element.
+   * @return {?Number}
+   */
+  getLimit () {
+    let limit = this.options.limit;
+    let value;
+
+    // call function if it represented
+    if (typeof limit === "function") {
+      limit = limit();
+    }
+
+    // set limit value
+    if (typeof limit === "number") {
+      value = limit;
+    }
+    // if limit is {HTMLElement} then set it offset for the value
+    else if (limit !== null && typeof limit === "object" && limit.tagName !== "undefined") {
+      value = calculateOffset(limit)[this.options.position];
+    }
+
+    value = typeof value === "number" ? Math.round(value) : null;
+
+    this.limit = value;
+
+    return value;
+  };
+
+  /**
+   * Calculating offsets of an element from each side of the screen.
+   * @return {Offset}
+   */
+  updateOffset () {
+    this.offset = calculateOffset(this.state === STATE.default ? this.node : this.placeholder, this.styles);
+  }
 
   /**
    * Hide node of an element.

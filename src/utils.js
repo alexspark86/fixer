@@ -1,7 +1,7 @@
 import objectAssign from "object-assign";
 
 /**
- * Defining an element
+ * Defining an element.
  * @param {String|jQuery|HTMLElement|Function} element
  * @return {HTMLElement}
  */
@@ -17,7 +17,7 @@ export function defineElement (element) {
 }
 
 /**
- * Calculating browser styles for an element
+ * Calculating browser styles for an element.
  * @param {HTMLElement} element
  */
 export function calculateStyles (element) {
@@ -40,7 +40,7 @@ export function calculateStyles (element) {
 }
 
 /**
- * Calculating offsets of the element from each side of the document
+ * Calculating offsets of the element from each side of the document.
  * @param {HTMLElement} element
  * @param {Object=} styles
  *
@@ -59,15 +59,15 @@ export function calculateOffset (element, styles) {
   var marginTop = styles ? parseInt(styles.marginTop) : 0;
 
   return {
-    top: rect.top + scrollTop - marginTop,
-    bottom: rect.bottom + scrollTop - marginTop,
-    left: rect.left + scrollLeft,
-    right: rect.right + scrollLeft
+    top: Math.round(rect.top + scrollTop - marginTop),
+    bottom: Math.round(rect.bottom + scrollTop - marginTop),
+    left: Math.round(rect.left + scrollLeft),
+    right: Math.round(rect.right + scrollLeft)
   };
 }
 
 /**
- * Getting scrollbar position
+ * Getting scrollbar position.
  *
  * @typedef {Object} Scrolled
  * @property {Number} top

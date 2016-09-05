@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
       position: "bottom"
     })
     .addElement("#bottom-block-2", {
-      position: "bottom",
-      limit: "#bottom-block-1"
+      position: "bottom"
     });
 }, false);

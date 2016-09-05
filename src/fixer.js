@@ -1,7 +1,9 @@
-import Element from "./element";
+import Element, {POSITION, STATE} from "./element";
 import {getScrolledPosition} from "./utils";
 import debounce from "debounce";
 import throttle from "throttleit";
+
+let documentHeight = document.documentElement.offsetHeight;
 
 /**
  * Class representing a fixer.
@@ -55,8 +57,8 @@ class Fixer {
       throw new Error("Please, provide selector or node to add new Fixer element");
     }
 
-    // update stacks
-    this.updateStacks();
+    // re-fix elements in stack if needed
+    this.onScroll(getScrolledPosition(), true);
 
     return this;
   }
@@ -64,57 +66,39 @@ class Fixer {
   /**
    * Function listening scroll.
    * @param {Scrolled} scrolled Document scrolled values in pixels
+   * @param {Boolean=} forceFix Option to fix elements even if they're fixed
    */
-  onScroll (scrolled) {
-    let i = this.elements.length;
+  onScroll (scrolled, forceFix) {
+    this.checkDocumentHeight();
 
-    while (i--) Fixer.fixToggle(this.elements[i], scrolled);
+    let i = this.elements.length;
+    while (i--) this.fixToggle(this.elements[i], scrolled, forceFix);
   }
 
   /**
    * Function to fix/unFix an element.
    * @param {Element} element Element instance
    * @param {Scrolled} scrolled Document scrolled values in pixels
-   * @param {Boolean=} forceFix Option to fix an element even if it fixed
+   * @param {Boolean=} [forceFix = element.state === STATE.default] Option to fix an element even if it fixed
    */
-  static fixToggle (element, scrolled, forceFix = !element.fixed) {
-    requestAnimationFrame(function () {
-      let stackHeight = element.stackOffset;
+  fixToggle (element, scrolled, forceFix = element.state === STATE.default) {
+    let offset = element.offset;
+    let limit = element.getLimit();
+    let stack = this.getStackHeight(element);
+    let limitDiff = limit !== null ? limit - (scrolled.top + element.node.offsetHeight + stack) : null;
 
-      if (element.position === "top") {
-        if (forceFix && element.offset.top <= scrolled.top + stackHeight) {
-          element.fix(stackHeight);
-        }
-        else if (element.offset.top >= scrolled.top + stackHeight) {
-          element.unFix();
-        }
-      }
-      else if (element.position === "bottom") {
-        if (forceFix && element.offset.bottom >= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
-          element.fix(stackHeight);
-        }
-        else if (element.offset.bottom <= scrolled.top - stackHeight + document.documentElement.offsetHeight) {
-          element.unFix();
-        }
-      }
-    });
+    let needToFix = element.options.position === POSITION.top ? offset.top <= scrolled.top + stack : offset.bottom >= scrolled.top - stack + document.documentElement.offsetHeight;
+    let needToLimit = limit !== null ? limitDiff <= 0 : false;
 
-  }
-
-  /**
-   * Update stackOffset property of every element and re-fix some element if needed.
-   */
-  updateStacks () {
-    let i = this.elements.length;
-
-    while (i--) {
-      let element = this.elements[i];
-
-      // update stackOffset for an element
-      element.stackOffset = this.getStackHeight(element);
-
-      // re-fix element if needed
-      Fixer.fixToggle(element, getScrolledPosition(), true);
+    // Fix/unFix or limit an element to its container or set it to absolute (to limit)
+    if (needToLimit && element.state !== STATE.limited) {
+      element.setAbsolute();
+    }
+    else if (needToFix && ((forceFix && !needToLimit) || (!needToLimit && element.state === STATE.limited))) {
+      element.fix(stack);
+    }
+    else if (!needToFix) {
+      element.unFix();
     }
   }
 
@@ -129,12 +113,31 @@ class Fixer {
     while (i--) {
       let item = this.elements[i];
 
-      if (element.position === item.position && (element.position === "top" ? item.offset.top < element.offset.top : item.offset.bottom > element.offset.bottom)) {
-        sum += item.height || 0;
+      if (element.options.position === item.options.position) {
+        let itemOnTheWay = element.options.position === POSITION.top ? item.offset.top < element.offset.top : item.offset.top > element.offset.bottom;
+
+        if (itemOnTheWay) {
+          let willHideByLimit = item.limit !== null && (element.options.position === POSITION.top ? item.limit <= element.offset.top : item.limit >= element.offset.bottom);
+
+          if (!willHideByLimit)
+            sum += item.node.offsetHeight || 0;
+        }
       }
     }
 
     return sum;
+  }
+
+  /**
+   * Update offsets of elements if the document's height has changed.
+   */
+  checkDocumentHeight () {
+    if (document.documentElement.offsetHeight !== documentHeight) {
+      documentHeight = document.documentElement.offsetHeight;
+
+      let i = this.elements.length;
+      while (i--) this.elements[i].updateOffset();
+    }
   }
 
   /**
@@ -148,7 +151,7 @@ class Fixer {
       let item = this.elements[i];
 
       if (
-        item.fixed &&                   // if element is fixed
+        item.state !== STATE.default && // if element is fixed
         item.placeholder &&             // if element have placeholder
         item.placeholder.offsetWidth && // if placeholder have width value
         item.node.offsetWidth !== item.placeholder.offsetWidth
