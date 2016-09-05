@@ -99,28 +99,32 @@ class Fixer {
    * @param {Boolean=} [forceFix = element.state === STATE.default] Option to fix an element even if it fixed
    */
   fixToggle (element, scrolled, forceFix = element.state === STATE.default) {
+    // update limit offset
+    element.updateLimit();
+
     // get values for an element
-    //
-    // DON'T change the order of declaration of variables,
-    // because 'offset' is needed to calculate limit and 'limit' is needed to get stackHeight.
     let offset = element.offset;
-    let limit = element.getLimit();
+    let limit = element.limit;
     let stack = this.getStackHeight(element, scrolled);
 
     // check conditions
-    let needToFix = element.options.position === POSITION.top ? offset.top <= scrolled.top + stack : offset.bottom >= scrolled.top - stack + document.documentElement.offsetHeight;
-    let needToLimit = limit !== null ? limit <= scrolled.top + element.node.offsetHeight + stack : false;
+    let isNeedToFix = element.options.position === POSITION.top
+      ? (offset.top <= scrolled.top + stack)
+      : (offset.bottom >= scrolled.top - stack + document.documentElement.offsetHeight);
+    let isNeedToLimit = limit !== null ? limit <= scrolled.top + element.node.offsetHeight + stack : false;
+
+    // check current state
     let isLimited = element.state === STATE.limited;
     let isNotFixed = forceFix || isLimited;
 
     // Fix/unFix or limit an element to its container or Set it to absolute (to limit)
-    if (needToLimit && !isLimited) {
+    if (isNeedToLimit && !isLimited) {
       element.setAbsolute();
     }
-    else if (needToFix && isNotFixed && !needToLimit) {
+    else if (isNeedToFix && isNotFixed && !isNeedToLimit) {
       element.fix(stack);
     }
-    else if (!needToFix) {
+    else if (!isNeedToFix) {
       element.unFix();
     }
   }
@@ -128,7 +132,7 @@ class Fixer {
   /**
    * Get stack height for an element.
    * @param {Element} element
-   * * @param {Scrolled} scrolled Document scrolled values in pixels
+   * @param {Scrolled} scrolled Document scrolled values in pixels
    */
   getStackHeight (element, scrolled) {
     let sum = 0;
@@ -138,9 +142,9 @@ class Fixer {
       let item = this.elements[i];
 
       if (element.options.position === item.options.position) {
-        let itemOnTheWay = element.options.position === POSITION.top ? item.offset.top < element.offset.top : item.offset.top > element.offset.bottom;
+        let isItemOnTheWay = element.options.position === POSITION.top ? item.offset.top < element.offset.top : item.offset.top > element.offset.bottom;
 
-        if (itemOnTheWay) {
+        if (isItemOnTheWay) {
           let willHideByLimit = item.limit !== null && (element.options.position === POSITION.top ? item.limit <= element.offset.top + scrolled.top : item.limit >= element.offset.bottom);
 
           if (!willHideByLimit)

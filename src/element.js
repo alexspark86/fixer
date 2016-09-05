@@ -91,11 +91,11 @@ export default class Element {
       // creating placeholder if needed
       this.placeholder = this.options.placeholder ? this.createPlaceholder() : null;
 
-      // calculate limit offset
-      this.limit = this.getLimit();
-
       // set offset parent of the node
       this.parent = this.node.offsetParent;
+
+      // calculate limit offset
+      this.updateLimit();
     }
   }
 
@@ -228,10 +228,9 @@ export default class Element {
   };
 
   /**
-   * Get actual value of limit for en element.
-   * @return {?Number}
+   * Update actual value of limit for en element.
    */
-  getLimit () {
+  updateLimit () {
     let limit = this.options.limit;
     let value;
 
@@ -252,13 +251,10 @@ export default class Element {
     value = typeof value === "number" ? value : null;
 
     this.limit = value;
-
-    return value;
   };
 
   /**
    * Update original values for element, such as styles and offset.
-   * @return {Offset}
    */
   updateValues () {
     // update styles of an element node
