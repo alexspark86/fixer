@@ -66,7 +66,9 @@ export default class Element {
    * @param {defaults} options
    */
   constructor (selector, options) {
-    options.limit = defineElement(options.limit);
+    if (options) {
+      options.limit = defineElement(options.limit);
+    }
 
     // extend element's options with initial- and default-options
     objectAssign(this.options = {}, DEFAULTS, options);
@@ -149,7 +151,8 @@ export default class Element {
     // set styles for placeholder node
     if (placeholder) {
       setStyle(placeholder, {
-        display: this.styles.display
+        display: this.styles.display,
+        width: this.node.offsetWidth + "px"
       });
     }
 
@@ -249,10 +252,14 @@ export default class Element {
   };
 
   /**
-   * Calculating offsets of an element from each side of the screen.
+   * Update original values for element, such as styles and offset.
    * @return {Offset}
    */
-  updateOffset () {
+  updateValues () {
+    // update styles of an element node
+    this.styles = calculateStyles(this.node);
+
+    // update offset
     this.offset = calculateOffset(this.state === STATE.default ? this.node : this.placeholder, this.styles);
   }
 

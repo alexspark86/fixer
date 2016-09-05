@@ -5,9 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let fixer = new Fixer();
 
   fixer
-    .addElement(".menu", {
-      limit: "#side-block-1"
-    })
+    .addElement(".menu")
     .addElement("#side-block-1", {
       limit: "#side-block-2"
     })

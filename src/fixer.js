@@ -24,7 +24,7 @@ class Fixer {
     window.addEventListener("load", onScroll);
 
     // listen to the page resize and recalculate elements width
-    let onResize = debounce(() => this.recalculateElementsWidth(getScrolledPosition()), 100);
+    let onResize = debounce(() => this.resetElements(), 4);
     window.addEventListener("resize", onResize);
   }
 
@@ -82,15 +82,16 @@ class Fixer {
    * @param {Boolean=} [forceFix = element.state === STATE.default] Option to fix an element even if it fixed
    */
   fixToggle (element, scrolled, forceFix = element.state === STATE.default) {
+    // get values for an element
     let offset = element.offset;
     let limit = element.getLimit();
     let stack = this.getStackHeight(element, scrolled);
-    let limitDiff = limit !== null ? limit - (scrolled.top + element.node.offsetHeight + stack) : null;
 
+    // check conditions
     let needToFix = element.options.position === POSITION.top ? offset.top <= scrolled.top + stack : offset.bottom >= scrolled.top - stack + document.documentElement.offsetHeight;
-    let needToLimit = limit !== null ? limitDiff <= 0 : false;
+    let needToLimit = limit !== null ? limit <= scrolled.top + element.node.offsetHeight + stack : false;
 
-    // Fix/unFix or limit an element to its container or set it to absolute (to limit)
+    // Fix/unFix or limit an element to its container or Set it to absolute (to limit)
     if (needToLimit && element.state !== STATE.limited) {
       element.setAbsolute();
     }
@@ -134,38 +135,32 @@ class Fixer {
    */
   checkDocumentHeight () {
     if (document.documentElement.offsetHeight !== documentHeight) {
+      // save current height of the document
       documentHeight = document.documentElement.offsetHeight;
 
+      // update values for each element
       let i = this.elements.length;
-      while (i--) this.elements[i].updateOffset();
+      while (i--) this.elements[i].updateValues();
     }
   }
 
   /**
-   * Recalculate width of the fixed elements (on resize).
-   * @param {Scrolled} scrolled Document scrolled height in pixels
+   * Reset all elements position and calculated values.
    */
-  recalculateElementsWidth (scrolled) {
+  resetElements () {
     let i = this.elements.length;
 
+    // unFix all elements and update they values
     while (i--) {
-      let item = this.elements[i];
+      let element = this.elements[i];
 
-      if (
-        item.state !== STATE.default && // if element is fixed
-        item.placeholder &&             // if element have placeholder
-        item.placeholder.offsetWidth && // if placeholder have width value
-        item.node.offsetWidth !== item.placeholder.offsetWidth
-      ) {
-        // TODO: check calculating of width with different css box-sizing values
-        // set the value of an element width equal to the width its placeholder
-        item.node.style.width = item.placeholder.offsetWidth - item.styles.paddingLeft - item.styles.paddingRight + "px";
-      }
+      element.unFix();
+      element.updateValues();
     }
 
-    // call onScroll method to check all elements position
-    this.onScroll(scrolled);
-  };
+    // call onScroll method to reFix elements
+    this.onScroll(getScrolledPosition());
+  }
 }
 
 export default Fixer;
