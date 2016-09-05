@@ -30,7 +30,9 @@ html, body {
 }
 .menu {
   padding: 10px 0;
+  height: 50px;
   border-bottom: 1px solid #ccc;
+  box-sizing: border-box;
 }
 .side-block {
   clear: both;
