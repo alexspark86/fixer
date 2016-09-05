@@ -4,6 +4,7 @@ import debounce from "debounce";
 import throttle from "throttleit";
 
 let documentHeight = document.documentElement.offsetHeight;
+let lastScroll = getScrolledPosition().top;
 
 /**
  * Class representing a fixer.
@@ -69,10 +70,26 @@ class Fixer {
    * @param {Boolean=} forceFix Option to fix elements even if they're fixed
    */
   onScroll (scrolled, forceFix) {
+    // check scroll direction
+    let scrollDown = scrolled.top > lastScroll;
+    lastScroll = scrolled.top;
+
+    // check document height (needs to update element values if the document height has dynamically changed)
     this.checkDocumentHeight();
 
-    let i = this.elements.length;
-    while (i--) this.fixToggle(this.elements[i], scrolled, forceFix);
+    // Choose iteration method depending on scroll direction.
+    // Shuffling elements in the reverse scrolling direction to avoid fixing elements, which are the limits.
+    //
+    // REWRITE: the better solution is to calculate limits offsets BEFORE execute fixToggle function (in a separate function).
+    if (scrollDown) {
+      for (let i = 0, max = this.elements.length; i < max; i += 1)
+        this.fixToggle(this.elements[i], scrolled, forceFix);
+
+    } else {
+      let i = this.elements.length;
+      while (i--) this.fixToggle(this.elements[i], scrolled, forceFix);
+
+    }
   }
 
   /**
@@ -83,6 +100,9 @@ class Fixer {
    */
   fixToggle (element, scrolled, forceFix = element.state === STATE.default) {
     // get values for an element
+    //
+    // DON'T change the order of declaration of variables,
+    // because 'offset' is needed to calculate limit and 'limit' is needed to get stackHeight.
     let offset = element.offset;
     let limit = element.getLimit();
     let stack = this.getStackHeight(element, scrolled);
@@ -90,12 +110,14 @@ class Fixer {
     // check conditions
     let needToFix = element.options.position === POSITION.top ? offset.top <= scrolled.top + stack : offset.bottom >= scrolled.top - stack + document.documentElement.offsetHeight;
     let needToLimit = limit !== null ? limit <= scrolled.top + element.node.offsetHeight + stack : false;
+    let isLimited = element.state === STATE.limited;
+    let isNotFixed = forceFix || isLimited;
 
     // Fix/unFix or limit an element to its container or Set it to absolute (to limit)
-    if (needToLimit && element.state !== STATE.limited) {
+    if (needToLimit && !isLimited) {
       element.setAbsolute();
     }
-    else if (needToFix && ((forceFix && !needToLimit) || (!needToLimit && element.state === STATE.limited))) {
+    else if (needToFix && isNotFixed && !needToLimit) {
       element.fix(stack);
     }
     else if (!needToFix) {
