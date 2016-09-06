@@ -21,7 +21,7 @@ export function defineElement (element) {
  * @param {HTMLElement} element
  */
 export function calculateStyles (element) {
-  var styles = window.getComputedStyle(element, null);
+  const styles = window.getComputedStyle(element, null);
 
   return objectAssign({}, {
     position: styles.position,
@@ -53,10 +53,10 @@ export function calculateStyles (element) {
  * @return {Offset}
  */
 export function calculateOffset (element, styles) {
-  var rect = element.getBoundingClientRect();
-  var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-  var marginTop = styles ? parseInt(styles.marginTop) : 0;
+  const rect = element.getBoundingClientRect();
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+  const marginTop = styles ? parseInt(styles.marginTop) : 0;
 
   return {
     top: rect.top + scrollTop - marginTop,

@@ -1,5 +1,5 @@
 import Element, {POSITION, STATE} from "./element";
-import {getScrolledPosition} from "./utils";
+import {getScrolledPosition, defineElement, removeByProperty} from "./utils";
 import debounce from "debounce";
 import throttle from "throttleit";
 
@@ -29,7 +29,7 @@ class Fixer {
   }
 
   /**
-   * Adding an element to Fixer.
+   * Add an element to Fixer.
    * @param {String|HTMLElement|jQuery} selector
    * @param {defaults=} options
    * @return {Fixer}
@@ -61,6 +61,29 @@ class Fixer {
     this.onScroll(getScrolledPosition(), true);
 
     return this;
+  }
+
+  /**
+   * Remove an element from Fixer.
+   * @param {String|HTMLElement|jQuery} selector
+   * @return {Fixer}
+   */
+  removeElement (selector) {
+    let element = defineElement(selector);
+    let i = this.elements.length;
+
+    while (i--) {
+      let item = this.elements[i];
+
+      if (item && item.hasOwnProperty('node') && (this.elements[i]['node'] === element)) {
+        this.elements[i].unFix();
+        this.elements.splice(i, 1);
+
+        this.resetElements();
+
+        break;
+      }
+    }
   }
 
   /**
@@ -181,7 +204,7 @@ class Fixer {
     }
 
     // Call onScroll method to reFix elements
-    this.onScroll(getScrolledPosition());
+    this.onScroll(getScrolledPosition(), true);
   }
 }
 
