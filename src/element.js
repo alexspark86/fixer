@@ -70,10 +70,10 @@ export default class Element {
       options.limit = defineElement(options.limit);
     }
 
-    // extend element's options with initial- and default-options
+    // Extend element's options with initial- and default-options
     objectAssign(this.options = {}, DEFAULTS, options);
 
-    // init basic parameters
+    // Init basic parameters
     objectAssign(this, {
       state: STATE.default,
       node: defineElement(selector),
@@ -82,19 +82,19 @@ export default class Element {
     });
 
     if (this.node && this.node.tagName) {
-      // saving original styles of an element node
+      // Saving original styles of an element node
       this.styles = calculateStyles(this.node);
 
-      // saving original offsets of an element node
+      // Saving original offsets of an element node
       this.offset = calculateOffset(this.node, this.styles);
 
-      // creating placeholder if needed
+      // Creating placeholder if needed
       this.placeholder = this.options.placeholder ? this.createPlaceholder() : null;
 
-      // set offset parent of the node
+      // Set offset parent of the node
       this.parent = this.node.offsetParent;
 
-      // calculate limit offset
+      // Calculate limit offset
       this.updateLimit();
     }
   }
@@ -134,7 +134,7 @@ export default class Element {
   fix (offset) {
     let {node: element, placeholder} = this;
 
-    // set styles for an element node
+    // Set styles for an element node
     let cssProperties = {
       position: "fixed",
       [this.options.position]: offset + "px",
@@ -144,13 +144,15 @@ export default class Element {
       width: this.styles.width
     };
 
+    // Set left coordinate if element is floated to the left/right
     if (this.styles.float !== "none") {
       cssProperties.left = this.offset.left - parseInt(this.styles.marginLeft) + "px";
     }
 
+    // Set styles for a node
     setStyle(element, cssProperties);
 
-    // set styles for placeholder node
+    // Set styles for placeholder node
     if (placeholder) {
       setStyle(placeholder, {
         display: this.styles.display,
@@ -158,10 +160,10 @@ export default class Element {
       });
     }
 
-    // add fixed className for an element node
+    // Add fixed className for an element node
     addClass(element, this.options.fixedClass);
 
-    // set fixed state for the instance of an element
+    // Set fixed state for the instance of an element
     this.state = STATE.fixed;
   }
 
@@ -201,7 +203,7 @@ export default class Element {
     let offsetTop = limit - parentOffset.top - element.offsetHeight;
     let offsetLeft = offset.left - parentOffset.left - parseInt(this.styles.marginLeft);
 
-    // set styles for an element node
+    // Set styles for an element node
     setStyle(element, {
       position: "absolute",
       top: offsetTop + "px",
@@ -214,14 +216,14 @@ export default class Element {
       width: this.styles.width
     });
 
-    // set styles for placeholder node
+    // Set styles for placeholder node
     if (placeholder) {
       setStyle(placeholder, {
         display: styles.display
       });
     }
 
-    // add fixed className for an element node
+    // Add fixed className for an element node
     addClass(element, this.options.fixedClass);
 
     this.state = STATE.limited;
@@ -234,16 +236,16 @@ export default class Element {
     let limit = this.options.limit;
     let value;
 
-    // call function if it represented
+    // Call function if it represented
     if (typeof limit === "function") {
       limit = limit();
     }
 
-    // set limit value
+    // Set limit value
     if (typeof limit === "number") {
       value = limit;
     }
-    // if limit is {HTMLElement} then set it offset for the value
+    // If limit is {HTMLElement} then set it offset for the value
     else if (limit !== null && typeof limit === "object" && limit.tagName !== "undefined") {
       value = calculateOffset(limit)[this.options.position];
     }
@@ -257,10 +259,10 @@ export default class Element {
    * Update original values for element, such as styles and offset.
    */
   updateValues () {
-    // update styles of an element node
+    // Update styles of an element node
     this.styles = calculateStyles(this.node);
 
-    // update offset
+    // Update offset
     this.offset = calculateOffset(this.state === STATE.default ? this.node : this.placeholder, this.styles);
   }
 

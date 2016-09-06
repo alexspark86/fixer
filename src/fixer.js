@@ -15,15 +15,15 @@ class Fixer {
    * Create fixer.
    */
   constructor () {
-    // array of the registered elements to fix
+    // Create an array for registering elements to fix
     this.elements = [];
 
-    // listen to the page load and scroll
+    // Listen to the page load and scroll
     let onScroll = throttle(() => this.onScroll(getScrolledPosition()), 16);
     window.addEventListener("scroll", onScroll);
     window.addEventListener("load", onScroll);
 
-    // listen to the page resize and recalculate elements width
+    // Listen to the page resize and recalculate elements width
     let onResize = debounce(() => this.resetElements(), 4);
     window.addEventListener("resize", onResize);
   }
@@ -41,10 +41,10 @@ class Fixer {
       element = new Element(selector, options);
 
       if (element.node && element.node.tagName) {
-        // add new element to array
+        // Add new element to array
         this.elements.push(element);
 
-        // sort elements array by top-offset for correct calculation of limit on scrolling
+        // Sort elements array by top-offset for correct calculation of limit on scrolling
         this.elements.sort(function (a, b) {
           return a.offset.top - b.offset.top;
         });
@@ -57,7 +57,7 @@ class Fixer {
       throw new Error("Please, provide selector or node to add new Fixer element");
     }
 
-    // re-fix elements in stack if needed
+    // Re-fix elements in stack if needed
     this.onScroll(getScrolledPosition(), true);
 
     return this;
@@ -69,14 +69,14 @@ class Fixer {
    * @param {Boolean=} forceFix Option to fix elements even if they're fixed
    */
   onScroll (scrolled, forceFix) {
-    // check document height (needs to update element values if the document height has dynamically changed)
+    // Check document height (needs to update element values if the document height has dynamically changed)
     this.checkDocumentHeight();
 
-    // update offsets of limits before fix/unFix elements (to prevent fix limit of each element before it offset was calculated)
+    // Update offsets of limits before fix/unFix elements (to prevent fix limit of each element before it offset was calculated)
     let i = this.elements.length;
     while (i--) this.elements[i].updateLimit();
 
-    // iterate trough the elements to fix/unFix
+    // Iterate trough the elements to fix/unFix
     i = this.elements.length;
     while (i--) this.fixToggle(this.elements[i], scrolled, forceFix);
   }
@@ -88,18 +88,18 @@ class Fixer {
    * @param {Boolean=} [forceFix = element.state === STATE.default] Option to fix an element even if it fixed
    */
   fixToggle (element, scrolled, forceFix = element.state === STATE.default) {
-    // get values for an element
+    // Get values for an element
     let offset = element.offset;
     let limit = element.limit;
     let stack = this.getStackHeight(element, scrolled);
 
-    // check conditions
+    // Check conditions
     let isNeedToFix = element.options.position === POSITION.top
       ? (offset.top <= scrolled.top + stack)
       : (offset.bottom >= scrolled.top - stack + document.documentElement.offsetHeight);
     let isNeedToLimit = limit !== null ? limit <= scrolled.top + element.node.offsetHeight + stack : false;
 
-    // check current state
+    // Check current state
     let isLimited = element.state === STATE.limited;
     let isNotFixed = forceFix || isLimited;
 
@@ -124,15 +124,25 @@ class Fixer {
     let sum = 0;
     let i = this.elements.length;
 
+    // Iterate through registered elements to determine whether they should be added to the element's stack
     while (i--) {
       let item = this.elements[i];
 
+      // Consider only items with the same position
       if (element.options.position === item.options.position) {
-        let isItemOnTheWay = element.options.position === POSITION.top ? item.offset.top < element.offset.top : item.offset.top > element.offset.bottom;
+
+        // Check if the item is on the way of element, when scrolling (up or down) - this will affect fixing the element
+        let isItemOnTheWay = element.options.position === POSITION.top
+          ? item.offset.top < element.offset.top
+          : item.offset.top > element.offset.bottom;
 
         if (isItemOnTheWay) {
-          let willHideByLimit = item.limit !== null && (element.options.position === POSITION.top ? item.limit <= element.offset.top + scrolled.top : item.limit >= element.offset.bottom);
+          // Check if an item will be hidden when reaching its 'limit' coordinate
+          let willHideByLimit = item.limit !== null && (element.options.position === POSITION.top
+              ? item.limit <= element.offset.top + scrolled.top
+              : item.limit >= element.offset.bottom);
 
+          // If an item is on the way and it will not be limited, then add it's height to sum
           if (!willHideByLimit)
             sum += item.node.offsetHeight || 0;
         }
@@ -147,10 +157,10 @@ class Fixer {
    */
   checkDocumentHeight () {
     if (document.documentElement.offsetHeight !== documentHeight) {
-      // save current height of the document
+      // Save current height of the document
       documentHeight = document.documentElement.offsetHeight;
 
-      // update values for each element
+      // Update values for each element
       let i = this.elements.length;
       while (i--) this.elements[i].updateValues();
     }
@@ -162,7 +172,7 @@ class Fixer {
   resetElements () {
     let i = this.elements.length;
 
-    // unFix all elements and update they values
+    // UnFix all elements and update they values
     while (i--) {
       let element = this.elements[i];
 
@@ -170,7 +180,7 @@ class Fixer {
       element.updateValues();
     }
 
-    // call onScroll method to reFix elements
+    // Call onScroll method to reFix elements
     this.onScroll(getScrolledPosition());
   }
 }
