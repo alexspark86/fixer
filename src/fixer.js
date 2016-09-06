@@ -1,4 +1,4 @@
-import Element, {POSITION, STATE} from "./element";
+import Element, {POSITION, STATE, DEFAULTS} from "./element";
 import {getScrolledPosition, defineElement, removeByProperty} from "./utils";
 import debounce from "debounce";
 import throttle from "throttleit";
@@ -173,6 +173,42 @@ class Fixer {
     }
 
     return sum;
+  }
+
+  /**
+   * Method for getting current stack height on the provided position.
+   * @param {String=} [position = DEFAULTS.position]
+   */
+  getHeight (position = DEFAULTS.position) {
+    let fixedHeight = 0;
+    let limitedHeight = 0;
+    let i = this.elements.length;
+
+    // Iterate trough registered elements
+    while (i--) {
+      let item = this.elements[i];
+
+      // Check only elements attached to the provided side of the screen
+      if (position === item.options.position) {
+
+        // Make sure the item state is fixed and then add it height to calculation
+        if (item.state === STATE.fixed) {
+          fixedHeight += item.node.offsetHeight || 0;
+        }
+        // If item is limited then calculate it coordinate relative to the window.
+        // Depending on the item position we need to use top or bottom coordinate.
+        // Since a limited element may have a negative coordinate, we need to take positive value or 0 by Math.max method.
+        else if (item.state === STATE.limited) {
+          let offset = item.node.getBoundingClientRect();
+          let height = (position === POSITION.top) ? offset.bottom : offset.top;
+
+          limitedHeight = Math.max(limitedHeight, height);
+        }
+      }
+    }
+
+    // Return a larger value between sum of heights of fixed and limited elements.
+    return Math.max(fixedHeight, limitedHeight);
   }
 
   /**

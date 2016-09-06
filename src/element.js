@@ -33,7 +33,7 @@ export const STATE = {
  * @property {String} fixedClass Classname to add for a fixed element
  * @property {HTMLElement|String|Function} limit Selector, node or function of the limit for an element
  */
-const DEFAULTS = {
+export const DEFAULTS = {
   position: POSITION.top,
   placeholder: true,
   placeholderClass: "fixer-placeholder",
