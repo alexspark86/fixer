@@ -1,3 +1,7 @@
+@import "reset";
+
+$container-width: 960px;
+
 /* Layout */
 html, body {
   margin: 0;
@@ -8,6 +12,13 @@ html, body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: $container-width;
+
+  color: #333;
+  font-family: 'PT Serif', serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
 }
 .page__header,
 .page__footer {
@@ -18,8 +29,9 @@ html, body {
 }
 .page__container {
   margin: 0 auto;
-  width: 960px;
+  width: $container-width;
 }
+
 
 /* Base design */
 .page__header,
@@ -29,6 +41,7 @@ html, body {
   color: #fff;
 }
 .menu {
+  margin-bottom: 40px;
   padding: 10px 0;
   height: 50px;
   border-bottom: 1px solid #ccc;
@@ -49,9 +62,19 @@ html, body {
     margin: 0 0 10px 10px;
   }
 }
+h1 {
+  margin-bottom: 20px;
+  font-family: "Merriweather", sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+}
+p {
+  margin: 15px 0;
+}
 
 .bottom-block {
   display: block;
+  margin-bottom: 15px;
   padding: 10px;
   min-height: 50px;
   border: 1px solid;
@@ -67,11 +90,16 @@ html, body {
   &__col {
     position: relative;
 
+    flex-basis: 50%;
+
+    box-sizing: border-box;
+
     &:nth-child(2n) {
       padding-left: 20px;
     }
   }
 }
+
 
 /* Debug styles */
 ._fixed {

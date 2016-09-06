@@ -1,5 +1,12 @@
 import Fixer from "../src/fixer";
+import WebFont from "webfontloader";
 import "./index.scss";
+
+WebFont.load({
+  google: {
+    families: ["Merriweather", "PT Serif"]
+  }
+});
 
 document.addEventListener("DOMContentLoaded", function () {
   let fixer = new Fixer();
