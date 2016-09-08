@@ -18,5 +18,10 @@ node_modules
 # NPM error logs
 npm-debug.log
 
-# build folder
-/lib
+# .npmignore should ignore tests and Git stuff
+test
+.gitignore
+.git
+
+# Allow build folder
+!lib/*
