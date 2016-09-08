@@ -12,8 +12,7 @@ const PATHS = {
 
 const common = {
   entry: {
-    'dist/fixer': path.resolve(__dirname, 'index'),
-    'example/example': path.resolve(PATHS.example, 'index')
+    'dist/fixer': path.resolve(__dirname, 'index')
   },
   output: {
     path: PATHS.build,
@@ -43,6 +42,9 @@ const common = {
 
 if (TARGET === 'start' || !TARGET) {
   module.exports = merge(common, {
+    entry: {
+      'example/example': path.resolve(PATHS.example, 'index')
+    },
     devtool: 'source-map',
     devServer: {
       contentBase: PATHS.example,
