@@ -7,11 +7,11 @@ import objectAssign from "object-assign";
 export function getDocumentHeight () {
   let body = document.body;
   let html = document.documentElement;
-  let height;
+  let height = 0;
 
   if (typeof document.height !== 'undefined') {
     height = document.height; // For webkit browsers
-  } else {
+  } else if (body && html) {
     height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
   }
 
@@ -25,8 +25,13 @@ export function getDocumentHeight () {
 export function getClientHeight () {
   let body = document.body;
   let html = document.documentElement;
+  let height = 0;
 
-  return Math.min( body.offsetHeight, html.clientHeight, html.offsetHeight );;
+  if (body && html) {
+    height = Math.min( body.offsetHeight, html.clientHeight, html.offsetHeight );
+  }
+
+  return height;
 }
 
 /**
