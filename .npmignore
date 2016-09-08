@@ -12,6 +12,16 @@ Desktop.ini
 ehthumbs.db
 Icon?
 
+# Example folder
+example
+
+# Build entry point
+index.js
+
+# Build config files
+webpack.config.js
+.babelrc
+
 # Node.js modules
 node_modules
 
