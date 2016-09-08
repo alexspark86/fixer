@@ -65,6 +65,16 @@ fixer.addElement(".menu", {
 });
 ```
 
+Removing element from Fixer:
+
+```js
+var fixer = new Fixer();
+
+fixer.addElement(".menu");
+fixer.removeElement(".menu");
+```
+
+
 ## Copyright and license
 
 Code released under [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.txt).
