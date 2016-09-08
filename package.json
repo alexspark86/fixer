@@ -2,7 +2,7 @@
   "name": "Fixer",
   "version": "1.0.0",
   "description": "The plugin is used to fix elements in stacks on the page",
-  "main": "src/fixer.js",
+  "main": "index.js",
   "author": "Alexey Kireev aka alexspark86",
   "repository": {
     "type": "git",
