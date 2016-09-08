@@ -25,15 +25,8 @@ export function getDocumentHeight () {
 export function getClientHeight () {
   let body = document.body;
   let html = document.documentElement;
-  let height;
 
-  if (typeof document.height !== 'undefined') {
-    height = document.height; // For webkit browsers
-  } else {
-    height = Math.min( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
-  }
-
-  return height;
+  return Math.min( body.offsetHeight, html.clientHeight, html.offsetHeight );;
 }
 
 /**
