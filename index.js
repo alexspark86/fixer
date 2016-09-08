@@ -1,3 +1,3 @@
-import Fixer from './src/fixer'
+import Fixer from './src/fixer';
 
-export default Fixer;
+module.exports = Fixer;
