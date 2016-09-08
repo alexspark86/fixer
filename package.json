@@ -2,12 +2,16 @@
   "name": "Fixer",
   "version": "1.0.0",
   "description": "The plugin is used to fix elements in stacks on the page",
-  "main": "index.js",
-  "author": "Alexey Kireev",
+  "main": "src/fixer.js",
+  "author": "Alexey Kireev aka alexspark86",
   "repository": {
     "type": "git",
     "url": "https://github.com/alexspark86/Fixer.git"
   },
+  "keywords": [
+    "scroll",
+    "fixed"
+  ],
   "license": "GPL-3.0",
   "dependencies": {
     "debounce": "^1.0.0",
