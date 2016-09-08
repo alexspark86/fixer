@@ -1,9 +1,9 @@
 import Element, {POSITION, STATE, DEFAULTS} from "./element";
-import {getScrolledPosition, defineElement, removeByProperty} from "./utils";
+import {getScrolledPosition, defineElement, getDocumentHeight, getClientHeight} from "./utils";
 import debounce from "debounce";
 import throttle from "throttleit";
 
-let documentHeight = document.documentElement.offsetHeight;
+let documentHeight;
 
 /**
  * Class representing a fixer.
@@ -15,6 +15,9 @@ class Fixer {
    * Create fixer.
    */
   constructor () {
+    // Save initial document height value
+    documentHeight = getDocumentHeight();
+
     // Create an array for registering elements to fix
     this.elements = [];
 
@@ -115,11 +118,12 @@ class Fixer {
     let offset = element.offset;
     let limit = element.limit;
     let stack = this.getStackHeight(element, scrolled);
+    let windowHeight = getClientHeight();
 
     // Check conditions
     let isNeedToFix = element.options.position === POSITION.top
       ? (offset.top <= scrolled.top + stack)
-      : (offset.bottom >= scrolled.top - stack + document.documentElement.offsetHeight);
+      : (offset.bottom >= scrolled.top - stack + windowHeight);
     let isNeedToLimit = limit !== null ? limit <= scrolled.top + element.node.offsetHeight + stack : false;
 
     // Check current state
@@ -135,6 +139,11 @@ class Fixer {
     }
     else if (!isNeedToFix) {
       element.unFix();
+    }
+
+    // Update horizontal position on horizontal scrolling
+    if (element.state === STATE.fixed) {
+      element.adjustHorizontal(scrolled.left);
     }
   }
 
@@ -176,8 +185,9 @@ class Fixer {
   }
 
   /**
-   * Method for getting current stack height on the provided position.
+   * Getting current height of a fixed elements by the provided position.
    * @param {String=} [position = DEFAULTS.position]
+   * @return {Number}
    */
   getHeight (position = DEFAULTS.position) {
     let fixedHeight = 0;
@@ -215,9 +225,11 @@ class Fixer {
    * Update offsets of elements if the document's height has changed.
    */
   checkDocumentHeight () {
-    if (document.documentElement.offsetHeight !== documentHeight) {
+    let currentDocumentHeight = getDocumentHeight();
+
+    if (currentDocumentHeight !== documentHeight) {
       // Save current height of the document
-      documentHeight = document.documentElement.offsetHeight;
+      documentHeight = currentDocumentHeight;
 
       // Update values for each element
       let i = this.elements.length;
@@ -229,6 +241,17 @@ class Fixer {
    * Reset all elements position and calculated values.
    */
   resetElements () {
+    // UnFix all elements and update they values
+    this.unfixAll();
+
+    // Call onScroll method to reFix elements
+    this.onScroll(getScrolledPosition(), true);
+  }
+
+  /**
+   * UnFix all elements and update they values.
+   */
+  unfixAll () {
     let i = this.elements.length;
 
     // UnFix all elements and update they values
@@ -238,9 +261,6 @@ class Fixer {
       element.unFix();
       element.updateValues();
     }
-
-    // Call onScroll method to reFix elements
-    this.onScroll(getScrolledPosition(), true);
   }
 }
 

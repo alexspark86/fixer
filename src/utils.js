@@ -1,6 +1,42 @@
 import objectAssign from "object-assign";
 
 /**
+ * Get actual height of the document.
+ * @return {Number}
+ */
+export function getDocumentHeight () {
+  let body = document.body;
+  let html = document.documentElement;
+  let height;
+
+  if (typeof document.height !== 'undefined') {
+    height = document.height; // For webkit browsers
+  } else {
+    height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
+  }
+
+  return height;
+}
+
+/**
+ * Get inner height of the window.
+ * @return {Number}
+ */
+export function getClientHeight () {
+  let body = document.body;
+  let html = document.documentElement;
+  let height;
+
+  if (typeof document.height !== 'undefined') {
+    height = document.height; // For webkit browsers
+  } else {
+    height = Math.min( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
+  }
+
+  return height;
+}
+
+/**
  * Defining an element.
  * @param {String|jQuery|HTMLElement|Function} element
  * @return {HTMLElement}

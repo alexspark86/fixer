@@ -230,6 +230,37 @@ export default class Element {
   };
 
   /**
+   * Adjusting horizontal position of an element relative to scrollLeft if page is scrolled horizontally.
+   * @param {Number} scrollLeft
+   */
+  adjustHorizontal (scrollLeft) {
+    let leftDiff = this.offset.left - scrollLeft;
+    let rightDiff = scrollLeft + document.documentElement.offsetWidth - this.offset.right;
+    let cssProperties;
+
+    if (leftDiff < 0) {
+      cssProperties = {
+        left: leftDiff + "px"
+      };
+    } else if (leftDiff > 0 && rightDiff < 0) {
+      cssProperties = {
+        left: this.offset.left - scrollLeft - parseInt(this.styles.marginLeft) + "px"
+      };
+    } else if (scrollLeft >= 0 && leftDiff >= 0) {
+      cssProperties = {
+        left: ""
+      };
+
+      // Set left coordinate if element is floated to the left/right
+      if (this.styles.float !== "none" && this.styles.marginLeft) {
+        cssProperties.left = leftDiff - parseInt(this.styles.marginLeft) + "px";
+      }
+    }
+
+    if (cssProperties) setStyle(this.node, cssProperties);
+  }
+
+  /**
    * Update actual value of limit for en element.
    */
   updateLimit () {
@@ -250,9 +281,7 @@ export default class Element {
       value = calculateOffset(limit)[this.options.position];
     }
 
-    value = typeof value === "number" ? value : null;
-
-    this.limit = value;
+    this.limit = typeof value === "number" ? value : null;
   };
 
   /**
