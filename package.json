@@ -1,7 +1,7 @@
 {
-  "name": "Fixer",
+  "name": "fixer.js",
   "version": "1.0.0",
-  "description": "The plugin is used to fix elements in stacks on the page",
+  "description": "Fixer helps you to easily fix elements in stacks on a page without using jQuery.",
   "main": "lib/fixer.js",
   "author": {
     "name" : "Alexey Kireev",
