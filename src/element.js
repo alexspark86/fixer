@@ -174,11 +174,11 @@ export default class Element {
     let {node: element, placeholder} = this;
 
     setStyle(element, {
-      position: this.styles.position,
-      [this.options.position]: this.styles[this.options.position],
-      zIndex: this.styles.zIndex,
-      marginTop: this.styles.marginTop,
-      marginBottom: this.styles.marginBottom,
+      position: "",
+      [this.options.position]: "",
+      zIndex: "",
+      marginTop: "",
+      marginBottom: "",
       width: ""
     });
 
