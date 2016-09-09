@@ -43,7 +43,7 @@ export function defineElement (element) {
   if (typeof element === "string") {
     element = document.querySelector(element);
   }
-  else if ((typeof element.jquery && element.length) || (typeof $ === "object" && element instanceof $ && element.length)) {
+  else if ((typeof element === "object" && typeof element.jquery !== "undefined" && element.length) || (typeof $ === "object" && element instanceof $ && element.length)) {
     element = element[0];
   }
 
