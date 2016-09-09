@@ -234,30 +234,41 @@ export default class Element {
    * @param {Number} scrollLeft
    */
   adjustHorizontal (scrollLeft) {
-    let leftDiff = this.offset.left - scrollLeft;
+    let leftDiff = Math.round(this.offset.left - scrollLeft);
     let rightDiff = scrollLeft + document.documentElement.offsetWidth - this.offset.right;
-    let cssProperties;
+    let currentLeft = parseInt(this.node.style.left) || null;
+    let marginLeft = parseInt(this.styles.marginLeft) || 0;
 
+    let left = null;
+
+    // check if the left side of the element is out of the page
     if (leftDiff < 0) {
-      cssProperties = {
-        left: leftDiff + "px"
-      };
-    } else if (leftDiff > 0 && rightDiff < 0) {
-      cssProperties = {
-        left: this.offset.left - scrollLeft - parseInt(this.styles.marginLeft) + "px"
-      };
-    } else if (scrollLeft >= 0 && leftDiff >= 0) {
-      cssProperties = {
-        left: ""
-      };
+      left = leftDiff;
+    }
+    // check if the right side of the element is out of the page
+    else if (leftDiff > 0 && rightDiff < 0) {
+      left = this.offset.left - scrollLeft - marginLeft;
+    }
+    // check if all is OK and needs to return left position back
+    else if (scrollLeft >= 0 && leftDiff >= 0 && currentLeft !== null) {
+      left = "";
 
       // Set left coordinate if element is floated to the left/right
-      if (this.styles.float !== "none" && this.styles.marginLeft) {
-        cssProperties.left = leftDiff - parseInt(this.styles.marginLeft) + "px";
+      if (this.styles.float !== "none") {
+        left = leftDiff - marginLeft;
+
+        // do not change left position if the current is the same
+        if (left === Math.round(currentLeft)) {
+          left = null;
+        }
       }
     }
 
-    if (cssProperties) setStyle(this.node, cssProperties);
+    if (left !== null) {
+      setStyle(this.node, {
+        left: left + "px"
+      });
+    }
   }
 
   /**
