@@ -137,7 +137,7 @@ class Fixer {
     else if (isNeedToFix && isNotFixed && !isNeedToLimit) {
       element.fix(stack);
     }
-    else if (!isNeedToFix) {
+    else if (!isNeedToFix && element.state !== STATE.default) {
       element.unFix();
     }
 
