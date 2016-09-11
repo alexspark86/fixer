@@ -138,16 +138,12 @@ export default class Element {
     let cssProperties = {
       position: "fixed",
       [this.options.position]: offset + "px",
+      left: this.offset.left + "px",
       zIndex: this.styles.zIndex === "auto" ? "100" : this.styles.zIndex,
       marginTop: 0,
       marginBottom: 0,
       width: this.styles.width
     };
-
-    // Set left coordinate if element is floated to the left/right
-    if (this.styles.float !== "none") {
-      cssProperties.left = this.offset.left - parseInt(this.styles.marginLeft) + "px";
-    }
 
     // Set styles for a node
     setStyle(element, cssProperties);
@@ -176,6 +172,7 @@ export default class Element {
     setStyle(element, {
       position: "",
       [this.options.position]: "",
+      left: "",
       zIndex: "",
       marginTop: "",
       marginBottom: "",
@@ -201,7 +198,7 @@ export default class Element {
 
     let parentOffset = calculateOffset(parent);
     let offsetTop = limit - parentOffset.top - element.offsetHeight;
-    let offsetLeft = offset.left - parentOffset.left - parseInt(this.styles.marginLeft);
+    let offsetLeft = offset.left - parentOffset.left;
 
     // Set styles for an element node
     setStyle(element, {
@@ -237,7 +234,6 @@ export default class Element {
     let leftDiff = Math.round(this.offset.left - scrollLeft);
     let rightDiff = scrollLeft + document.documentElement.offsetWidth - this.offset.right;
     let currentLeft = parseInt(this.node.style.left) || null;
-    let marginLeft = parseInt(this.styles.marginLeft) || 0;
 
     let left = null;
 
@@ -247,7 +243,7 @@ export default class Element {
     }
     // check if the right side of the element is out of the page
     else if (leftDiff > 0 && rightDiff < 0) {
-      left = this.offset.left - scrollLeft - marginLeft;
+      left = this.offset.left - scrollLeft;
     }
     // check if all is OK and needs to return left position back
     else if (scrollLeft >= 0 && leftDiff >= 0 && currentLeft !== null) {
@@ -255,7 +251,7 @@ export default class Element {
 
       // Set left coordinate if element is floated to the left/right
       if (this.styles.float !== "none") {
-        left = leftDiff - marginLeft;
+        left = leftDiff;
 
         // do not change left position if the current is the same
         if (left === Math.round(currentLeft)) {
