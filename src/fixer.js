@@ -29,6 +29,9 @@ class Fixer {
     // Listen to the page resize and recalculate elements width
     let onResize = debounce(() => this.resetElements(), 4);
     window.addEventListener("resize", onResize);
+
+    // Provide 'addElement' method for Element class to make possible chaining this method
+    Element.prototype.addElement = this.addElement.bind(this);
   }
 
   /**
@@ -64,7 +67,7 @@ class Fixer {
     // Re-fix elements in stack if needed
     this._onScroll(getScrolledPosition(), true);
 
-    return this;
+    return element;
   }
 
   /**
