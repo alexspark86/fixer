@@ -91,21 +91,19 @@ export default class Element {
       this.offset = calculateOffset(this.node, this.styles);
 
       // Creating placeholder if needed
-      this.placeholder = this.options.placeholder ? this.createPlaceholder() : null;
+      this.placeholder = this.options.placeholder ? this._createPlaceholder() : null;
 
       // Set offset parent of the node
       this.parent = this.node.offsetParent;
-
-      // Calculate limit offset
-      this.updateLimit();
     }
   }
 
   /**
    * Create placeholder node.
+   * @protected
    * @return {HTMLElement}
    */
-  createPlaceholder () {
+  _createPlaceholder () {
     let placeholder = document.createElement("span");
 
     placeholder.className = this.options.placeholderClass;
@@ -200,7 +198,7 @@ export default class Element {
   /**
    * Set position absolute with correct coordinates relative to parent to properly fix an element by its limiter.
    */
-  setAbsolute () {
+  setLimited () {
     let {node: element, offset, limit, parent, placeholder, styles} = this;
 
     let parentOffset = calculateOffset(parent);

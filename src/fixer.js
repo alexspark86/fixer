@@ -269,7 +269,7 @@ class Fixer {
 
     // Fix/unFix or limit an element to its container or Set it to absolute (to limit)
     if (isNeedToLimit && !isLimited) {
-      element.setAbsolute();
+      element.setLimited();
     }
     else if (isNeedToFix && isNotFixed && !isNeedToLimit) {
       element.fix(stack);
