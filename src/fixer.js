@@ -142,6 +142,86 @@ class Fixer {
   }
 
   /**
+   * Getting height of the fixed element by provided offset.
+   * @public
+   * @param {String|Number|Function} [position = DEFAULTS.position]
+   * @param {Number|Function=} offset
+   */
+  getHeightByOffset (position = DEFAULTS.position, offset) {
+    let elements;
+    let sum = 0;
+    let scrolled = getScrolledPosition();
+    let windowHeight = getClientHeight();
+
+    // Check arguments and reassign them if necessary
+    if (typeof position === "number" || typeof position === "function") {
+      offset = position;
+      position = DEFAULTS.position;
+    }
+
+    // Get offset value if provided function
+    if (typeof offset === "function") {
+      offset = offset();
+    }
+    // Use current scroll position as offset if it doesn't provided
+    else if (typeof offset !== "number") {
+      offset = scrolled.top;
+    }
+
+    // Offset can't be larger than documentHeight, so choose a smaller value between them
+    offset = Math.min(offset, documentHeight - windowHeight);
+
+    // Unfix all elements to properly recalculate offset values
+    this._unfixAll();
+
+    // Filter and sort elements by position and scroll direction
+    elements = this.elements.filter(function (element) {
+      return element.options.position === position;
+    })
+    .sort(function (a, b) {
+      return (position === POSITION.top) ? b.offset.top - a.offset.top : a.offset.top - b.offset.top;
+    });
+
+    let i = elements.length;
+    while (i--) {
+      let element = elements[i];
+
+      element.updateLimit();
+
+      // Get values for an element
+      let limit = element.limit;
+      let height = element.node.offsetHeight;
+      let stack = this._getStackHeight(element, {top: offset, left: scrolled.left});
+
+      let limitDiff = limit !== null ? limit - offset - stack : null;
+
+      // Check conditions
+      let isNeedToFix = element.options.position === POSITION.top
+        ? (element.offset.top <= offset + stack)
+        : (element.offset.bottom >= offset - stack + windowHeight);
+
+      let isLimited = limitDiff !== null ? limitDiff < height : false;
+      let isHideByLimit = limitDiff !== null ? limitDiff <= 0 : false;
+
+
+      if (isLimited && !isHideByLimit) {
+        sum += limitDiff;
+      }
+      else if (isNeedToFix && !isHideByLimit) {
+        sum += height;
+      }
+    }
+
+    // Clear elements variable
+    elements = null;
+
+    // Call onScroll method to reFix elements
+    this._onScroll(getScrolledPosition(), true);
+
+    return sum;
+  }
+
+  /**
    * Function listening scroll.
    * @protected
    * @param {Scrolled} scrolled Document scrolled values in pixels
@@ -261,14 +341,16 @@ class Fixer {
    * @protected
    */
   _unfixAll () {
+    // UnFix all elements
     let i = this.elements.length;
-
-    // UnFix all elements and update they values
     while (i--) {
-      let element = this.elements[i];
+      this.elements[i].unFix();
+    }
 
-      element.unFix();
-      element.updateValues();
+    // Update values of the elements
+    i = this.elements.length;
+    while (i--) {
+      this.elements[i].updateValues();
     }
   }
 }
