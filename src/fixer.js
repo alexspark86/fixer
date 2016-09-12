@@ -116,20 +116,20 @@ class Fixer {
 
     // Iterate trough registered elements
     while (i--) {
-      let item = this.elements[i];
+      let element = this.elements[i];
 
       // Check only elements attached to the provided side of the screen
-      if (position === item.options.position) {
+      if (position === element.options.position && element.options.stack === true) {
 
         // Make sure the item state is fixed and then add it height to calculation
-        if (item.state === STATE.fixed) {
-          fixedHeight += item.node.offsetHeight || 0;
+        if (element.state === STATE.fixed) {
+          fixedHeight += element.node.offsetHeight || 0;
         }
         // If item is limited then calculate it coordinate relative to the window.
         // Depending on the item position we need to use top or bottom coordinate.
         // Since a limited element may have a negative coordinate, we need to take positive value or 0 by Math.max method.
-        else if (item.state === STATE.limited) {
-          let offset = item.node.getBoundingClientRect();
+        else if (element.state === STATE.limited) {
+          let offset = element.node.getBoundingClientRect();
           let height = (position === POSITION.top) ? offset.bottom : offset.top;
 
           limitedHeight = Math.max(limitedHeight, height);
@@ -176,7 +176,7 @@ class Fixer {
 
     // Filter and sort elements by position and scroll direction
     elements = this.elements.filter(function (element) {
-      return element.options.position === position;
+      return element.options.position === position && element.options.stack === true;
     })
     .sort(function (a, b) {
       return (position === POSITION.top) ? b.offset.top - a.offset.top : a.offset.top - b.offset.top;
@@ -296,7 +296,7 @@ class Fixer {
       let item = this.elements[i];
 
       // Consider only items with the same position
-      if (element.options.position === item.options.position) {
+      if (element.options.position === item.options.position && item.options.stack === true) {
 
         // Check if the item is on the way of element, when scrolling (up or down) - this will affect fixing the element
         let isItemOnTheWay = element.options.position === POSITION.top

@@ -31,6 +31,7 @@ export const STATE = {
  * @property {Boolean} placeholder Indicates whether placeholder is needed
  * @property {String} placeholderClass Classname to generate the placeholder
  * @property {String} fixedClass Classname to add for a fixed element
+ * @property {Boolean} stack Parameter indicates whether the height of the element count for fixing other elements
  * @property {HTMLElement|String|Function} limit Selector, node or function of the limit for an element
  */
 export const DEFAULTS = {
@@ -38,6 +39,7 @@ export const DEFAULTS = {
   placeholder: true,
   placeholderClass: "fixer-placeholder",
   fixedClass: "_fixed",
+  stack: true,
   limit: null
 };
 
