@@ -93,12 +93,11 @@ export function calculateOffset (element, styles) {
   const rect = element.getBoundingClientRect();
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-  const marginTop = styles ? parseInt(styles.marginTop) : 0;
   const marginLeft = styles ? parseInt(styles.marginLeft) : 0;
 
   return {
-    top: rect.top + scrollTop - marginTop,
-    bottom: rect.bottom + scrollTop - marginTop,
+    top: rect.top + scrollTop,
+    bottom: rect.bottom + scrollTop,
     left: rect.left + scrollLeft - marginLeft,
     right: rect.right + scrollLeft - marginLeft
   };
