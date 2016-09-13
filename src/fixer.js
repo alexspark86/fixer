@@ -287,6 +287,11 @@ class Fixer {
     if (element.state === STATE.fixed) {
       element.adjustHorizontal(scrolled.left);
     }
+
+    // Stretch element if is needed (experimental feature)
+    if (element.options.stretchTo !== null) {
+      element.stretch(scrolled);
+    }
   }
 
   /**

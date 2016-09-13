@@ -1,4 +1,4 @@
-import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, removeClass, objectHasValue} from "./utils";
+import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, removeClass, objectHasValue, getClientHeight} from "./utils";
 import objectAssign from "object-assign";
 
 /**
@@ -49,6 +49,7 @@ export const EVENT = {
  * @property {String} fixedClass Classname to add for a fixed element
  * @property {Boolean} stack Parameter indicates whether the height of the element count for fixing other elements
  * @property {HTMLElement|String|Function} limit Selector, node or function of the limit for an element
+ * @property {HTMLElement|String|Function} stretchTo EXPERIMENTAL feature – Selector, node or function of the coordinate to stretch element vertically to it
  */
 export const DEFAULTS = {
   position: POSITION.top,
@@ -56,7 +57,8 @@ export const DEFAULTS = {
   placeholderClass: "fixer-placeholder",
   fixedClass: "_fixed",
   stack: true,
-  limit: null
+  limit: null,
+  stretchTo: null
 };
 
 /**
@@ -84,12 +86,16 @@ export default class Element {
    * @param {defaults} options
    */
   constructor (selector, options) {
-    if (options) {
-      options.limit = defineElement(options.limit);
-    }
-
     // Extend element's options with initial- and default-options
     objectAssign(this.options = {}, DEFAULTS, options);
+
+    if (options) {
+      this.options.limit = defineElement(this.options.limit);
+      this.options.stretchTo = defineElement(this.options.stretchTo);
+
+      // do not count element height for fixing other elements if it has option 'stretchTo'
+      this.options.stack = this.options.stretchTo === null;
+    }
 
     // Init basic parameters
     objectAssign(this, {
@@ -269,6 +275,42 @@ export default class Element {
     // Dispatch the event
     this.node.dispatchEvent(new Event(EVENT.limited));
   };
+
+  /**
+   * Stretch element vertically to the provided element or offset value.
+   */
+  stretch (scrolled) {
+    let stretchTo = getStretchOffset(this.options.stretchTo, this.options.position) - scrolled.top;
+    let top = this.node.getBoundingClientRect().top;
+    let windowHeight = getClientHeight();
+
+    stretchTo = windowHeight - stretchTo < 0 ? windowHeight : stretchTo;
+
+    setStyle(this.node, {
+      height: (stretchTo - top) + "px"
+    });
+
+    // Calculate stretch offset
+    function getStretchOffset (limit, position) {
+      let value;
+
+      // Call function if it represented
+      if (typeof limit === "function") {
+        limit = limit();
+      }
+
+      // Set limit value
+      if (typeof limit === "number") {
+        value = limit;
+      }
+      // If limit is {HTMLElement} then set it offset for the value
+      else if (limit !== null && typeof limit === "object" && limit.tagName !== "undefined") {
+        value = calculateOffset(limit)[position];
+      }
+
+      return typeof value === "number" ? value : null;
+    }
+  }
 
   /**
    * Adjusting horizontal position of an element relative to scrollLeft if page is scrolled horizontally.
