@@ -1,4 +1,4 @@
-import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, removeClass} from "./utils";
+import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, removeClass, objectHasValue} from "./utils";
 import objectAssign from "object-assign";
 
 /**
@@ -20,6 +20,22 @@ export const STATE = {
   default: "default",
   fixed: "fixed",
   limited: "limited"
+};
+
+/**
+ * Event string values.
+ * @readonly
+ * @enum {string}
+ */
+export const EVENT = {
+  init: "init",
+  update: "update",
+  fixed: "fixed",
+  preFixed: "preFixed",
+  unfixed: "unfixed",
+  preUnfixed: "preUnfixed",
+  limited: "limited",
+  preLimited: "preLimited"
 };
 
 /**
@@ -95,6 +111,9 @@ export default class Element {
 
       // Set offset parent of the node
       this.parent = this.node.offsetParent;
+
+      // Dispatch the event
+      this.node.dispatchEvent(new Event(EVENT.init));
     }
   }
 
@@ -139,6 +158,9 @@ export default class Element {
   fix (offset) {
     let {node: element, placeholder} = this;
 
+    // Dispatch the event
+    this.node.dispatchEvent(new Event(EVENT.preFixed));
+
     // Set styles for an element node
     let cssProperties = {
       position: "fixed",
@@ -166,6 +188,9 @@ export default class Element {
 
     // Set fixed state for the instance of an element
     this.state = STATE.fixed;
+
+    // Dispatch the event
+    this.node.dispatchEvent(new Event(EVENT.fixed));
   }
 
   /**
@@ -173,6 +198,9 @@ export default class Element {
    */
   unFix () {
     let {node: element, placeholder} = this;
+
+    // Dispatch the event
+    this.node.dispatchEvent(new Event(EVENT.preUnfixed));
 
     setStyle(element, {
       position: "",
@@ -192,7 +220,11 @@ export default class Element {
 
     removeClass(element, this.options.fixedClass);
 
+    // Update state
     this.state = STATE.default;
+
+    // Dispatch the event
+    this.node.dispatchEvent(new Event(EVENT.unfixed));
   };
 
   /**
@@ -204,6 +236,9 @@ export default class Element {
     let parentOffset = calculateOffset(parent);
     let offsetTop = limit - parentOffset.top - element.offsetHeight;
     let offsetLeft = offset.left - parentOffset.left;
+
+    // Dispatch the event
+    this.node.dispatchEvent(new Event(EVENT.preLimited));
 
     // Set styles for an element node
     setStyle(element, {
@@ -228,7 +263,11 @@ export default class Element {
     // Add fixed className for an element node
     addClass(element, this.options.fixedClass);
 
+    // Update state
     this.state = STATE.limited;
+
+    // Dispatch the event
+    this.node.dispatchEvent(new Event(EVENT.limited));
   };
 
   /**
@@ -305,19 +344,63 @@ export default class Element {
 
     // Update offset
     this.offset = calculateOffset(this.state === STATE.default ? this.node : this.placeholder, this.styles);
+
+    // Dispatch the event
+    this.node.dispatchEvent(new Event(EVENT.update));
   }
 
   /**
-   * Hide node of an element.
+   * Attach an event listener function for one event to the element node.
+   * @public
+   * @param {String} event One or more space-separated event types to listen for
+   * @param {Function} listener A function to execute when the event is triggered
    */
-  hide () {
-    setStyle(this.node, {display: "none"});
+  on (event, listener) {
+    let events = event.split(" ");
+    events = events.length > 1 ? events : event.split(",");
+
+    if (events.length) {
+      let i = events.length;
+      while (i--) addEvent.call(this, events[i], listener);
+    }
+    else if (typeof event === "string") {
+      addEvent.call(this, event, listener);
+    }
+    else if (typeof event !== "string" && typeof listener === "undefined") {
+      throw new Error("Can't add listener for the element, please provide the correct type of event", this.node);
+    }
+
+    function addEvent (event, listener) {
+      if (objectHasValue(EVENT, event)) {
+        this.node.addEventListener(event, listener, false);
+      } else {
+        throw new Error("Unknown event type: " + event);
+      }
+    }
+
+    return this;
   }
 
   /**
-   * Show node of an element (return its initial display style).
+   * Remove an event listener.
+   * @public
+   * @param {String=} event One event type to stop listen for
+   * @param {Function=} listener A listener function previously attached for the event node
    */
-  show () {
-    setStyle(this.node, {display: this.styles.display});
+  off (event, listener) {
+    if (typeof event === "string" && typeof listener === "function") {
+      this.node.removeEventListener(event, listener, false);
+    }
+    else if (typeof event !== "string") {
+      let cloneNode = this.node.cloneNode(true);
+
+      this.node.parentNode.replaceChild(cloneNode, this.node);
+      this.node = cloneNode;
+    }
+    else if (typeof listener === "undefined") {
+      throw new Error("Can't remove listener for event: " + event + ". Please provide the listener.");
+    }
+
+    return this;
   }
 }

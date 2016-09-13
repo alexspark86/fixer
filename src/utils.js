@@ -154,3 +154,18 @@ export function removeClass(element, className) {
     element.className = element.className.replace(className, "");
   }
 }
+
+/**
+ * Checks does object contains provided value.
+ * @param {Object} object
+ * @param {*} value
+ */
+export function objectHasValue (object, value) {
+  for (var key in object) {
+    if (object.hasOwnProperty(key) && object[key] === value) {
+      return true;
+    }
+  }
+
+  return false;
+}
