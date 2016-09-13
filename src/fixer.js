@@ -112,50 +112,17 @@ class Fixer {
   }
 
   /**
-   * Getting current height of a fixed elements by the provided position.
+   * Getting height of the fixed element.
+   *
+   * There are two options for using:
+   * — You get current fixed height if the arguments did not assign.
+   * — You get height of elements that will fixed on the provided offset. It useful for scrolling to anchor.
+   *
    * @public
-   * @param {String=} [position = DEFAULTS.position]
-   * @return {Number}
+   * @param {String|Number|Function} [position = DEFAULTS.position] The side of the screen where elements should be fixed
+   * @param {Number|Function=} [offset = scrolled.top] The offset value relative to the document for which to calculate the height of the fixed elements
    */
-  getHeight (position = DEFAULTS.position) {
-    let fixedHeight = 0;
-    let limitedHeight = 0;
-    let i = this.elements.length;
-
-    // Iterate trough registered elements
-    while (i--) {
-      let element = this.elements[i];
-
-      // Check only elements attached to the provided side of the screen
-      if (position === element.options.position && element.options.stack === true) {
-
-        // Make sure the item state is fixed and then add it height to calculation
-        if (element.state === STATE.fixed) {
-          fixedHeight += element.node.offsetHeight || 0;
-        }
-        // If item is limited then calculate it coordinate relative to the window.
-        // Depending on the item position we need to use top or bottom coordinate.
-        // Since a limited element may have a negative coordinate, we need to take positive value or 0 by Math.max method.
-        else if (element.state === STATE.limited) {
-          let offset = element.node.getBoundingClientRect();
-          let height = (position === POSITION.top) ? offset.bottom : offset.top;
-
-          limitedHeight = Math.max(limitedHeight, height);
-        }
-      }
-    }
-
-    // Return a larger value between sum of heights of fixed and limited elements.
-    return Math.max(fixedHeight, limitedHeight);
-  }
-
-  /**
-   * Getting height of the fixed element by provided offset.
-   * @public
-   * @param {String|Number|Function} [position = DEFAULTS.position]
-   * @param {Number|Function=} offset
-   */
-  getHeightByOffset (position = DEFAULTS.position, offset) {
+  getHeight (position = DEFAULTS.position, offset) {
     let elements;
     let sum = 0;
     let scrolled = getScrolledPosition();
@@ -190,10 +157,12 @@ class Fixer {
       return (position === POSITION.top) ? b.offset.top - a.offset.top : a.offset.top - b.offset.top;
     });
 
+    // Iterate through the elements
     let i = elements.length;
     while (i--) {
       let element = elements[i];
 
+      // Update value of the limit for the element to get accurate calculations
       element.updateLimit();
 
       // Get values for an element
