@@ -134,8 +134,11 @@ class Fixer {
       position = DEFAULTS.position;
     }
 
+    if (typeof offset === "undefined") {
+      return this._getCurrentHeight(position);
+    }
     // Get offset value if provided function
-    if (typeof offset === "function") {
+    else if (typeof offset === "function") {
       offset = offset();
     }
     // Use current scroll position as offset if it doesn't provided
@@ -299,6 +302,44 @@ class Fixer {
     }
 
     return sum;
+  }
+
+  /**
+   * Getting current height of a fixed elements by the provided position.
+   * @public
+   * @param {String=} [position = DEFAULTS.position]
+   * @return {Number}
+   */
+  _getCurrentHeight (position = DEFAULTS.position) {
+    let fixedHeight = 0;
+    let limitedHeight = 0;
+    let i = this.elements.length;
+
+    // Iterate trough registered elements
+    while (i--) {
+      let element = this.elements[i];
+
+      // Check only elements attached to the provided side of the screen
+      if (position === element.options.position && element.options.stack === true) {
+
+        // Make sure the item state is fixed and then add it height to calculation
+        if (element.state === STATE.fixed) {
+          fixedHeight += element.node.offsetHeight || 0;
+        }
+        // If item is limited then calculate it coordinate relative to the window.
+        // Depending on the item position we need to use top or bottom coordinate.
+        // Since a limited element may have a negative coordinate, we need to take positive value or 0 by Math.max method.
+        else if (element.state === STATE.limited) {
+          let offset = element.node.getBoundingClientRect();
+          let height = (position === POSITION.top) ? offset.bottom : offset.top;
+
+          limitedHeight = Math.max(limitedHeight, height);
+        }
+      }
+    }
+
+    // Return a larger value between sum of heights of fixed and limited elements.
+    return Math.max(fixedHeight, limitedHeight);
   }
 
   /**
