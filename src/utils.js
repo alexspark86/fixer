@@ -187,3 +187,25 @@ export function objectHasValue (object, value) {
 
   return false;
 }
+
+/**
+ * Create cross-browser event.
+ * @param {String} type
+ * @return {Event}
+ */
+export function createEvent (type) {
+  let event = null;
+
+  try {
+    event = new Event(type);
+  }
+  catch (error) {
+    let doesntBubble = false;
+    let isntCancelable = false;
+
+    event = document.createEvent("Event");
+    event.initEvent(type, doesntBubble, isntCancelable);
+  }
+
+  return event;
+}

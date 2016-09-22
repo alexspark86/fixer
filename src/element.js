@@ -1,4 +1,4 @@
-import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, removeClass, objectHasValue, getClientHeight} from "./utils";
+import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, removeClass, objectHasValue, getClientHeight, createEvent} from "./utils";
 import objectAssign from "object-assign";
 
 /**
@@ -119,7 +119,7 @@ export default class Element {
       this.parent = this.node.offsetParent;
 
       // Dispatch the event
-      this.node.dispatchEvent(new Event(EVENT.init));
+      this.node.dispatchEvent(createEvent(EVENT.init));
     }
   }
 
@@ -165,7 +165,7 @@ export default class Element {
     let {node: element, placeholder} = this;
 
     // Dispatch the event
-    this.node.dispatchEvent(new Event(EVENT.preFixed));
+    this.node.dispatchEvent(createEvent(EVENT.preFixed));
 
     // Set styles for an element node
     let cssProperties = {
@@ -196,7 +196,7 @@ export default class Element {
     this.state = STATE.fixed;
 
     // Dispatch the event
-    this.node.dispatchEvent(new Event(EVENT.fixed));
+    this.node.dispatchEvent(createEvent(EVENT.fixed));
   }
 
   /**
@@ -206,7 +206,7 @@ export default class Element {
     let {node: element, placeholder} = this;
 
     // Dispatch the event
-    this.node.dispatchEvent(new Event(EVENT.preUnfixed));
+    this.node.dispatchEvent(createEvent(EVENT.preUnfixed));
 
     setStyle(element, {
       position: "",
@@ -230,7 +230,7 @@ export default class Element {
     this.state = STATE.default;
 
     // Dispatch the event
-    this.node.dispatchEvent(new Event(EVENT.unfixed));
+    this.node.dispatchEvent(createEvent(EVENT.unfixed));
   };
 
   /**
@@ -244,7 +244,7 @@ export default class Element {
     let offsetLeft = offset.left - parentOffset.left;
 
     // Dispatch the event
-    this.node.dispatchEvent(new Event(EVENT.preLimited));
+    this.node.dispatchEvent(createEvent(EVENT.preLimited));
 
     // Set styles for an element node
     setStyle(element, {
@@ -273,7 +273,7 @@ export default class Element {
     this.state = STATE.limited;
 
     // Dispatch the event
-    this.node.dispatchEvent(new Event(EVENT.limited));
+    this.node.dispatchEvent(createEvent(EVENT.limited));
   };
 
   /**
@@ -388,7 +388,7 @@ export default class Element {
     this.offset = calculateOffset(this.state === STATE.default ? this.node : this.placeholder, this.styles);
 
     // Dispatch the event
-    this.node.dispatchEvent(new Event(EVENT.update));
+    this.node.dispatchEvent(createEvent(EVENT.update));
   }
 
   /**
