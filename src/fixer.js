@@ -1,8 +1,9 @@
 import Element, {POSITION, STATE, DEFAULTS} from "./element";
-import {getScrolledPosition, defineElement, getDocumentHeight, getClientHeight} from "./utils";
+import {getScrolledPosition, defineElement, getDocumentHeight, getDocumentWidth, getClientHeight} from "./utils";
 import debounce from "debounce";
 import throttle from "throttleit";
 
+let documentWidth;
 let documentHeight;
 
 /**
@@ -17,6 +18,7 @@ class Fixer {
   constructor () {
     // Save initial document height value
     documentHeight = getDocumentHeight();
+    documentWidth = getDocumentWidth();
 
     // Create an array for registering elements to fix
     this.elements = [];
@@ -27,7 +29,11 @@ class Fixer {
     window.addEventListener("load", onScroll);
 
     // Listen to the page resize and recalculate elements width
-    let onResize = debounce(() => this.resetElements(), 4);
+    let onResize = debounce(() => {
+      if (documentHeight !== getDocumentHeight() || documentWidth !== getDocumentWidth()) {
+        this.resetElements();
+      }
+    }, 4);
     window.addEventListener("resize", onResize);
 
     // Provide 'addElement' method for Element class to make possible chaining this method
@@ -210,6 +216,9 @@ class Fixer {
   _onScroll (scrolled, forceFix) {
     // Check document height (needs to update element values if the document height has dynamically changed)
     this._checkDocumentHeight();
+
+    // Update document width
+    documentWidth = getDocumentWidth();
 
     // Update offsets of limits before fix/unFix elements (to prevent fix limit of each element before it offset was calculated)
     let i = this.elements.length;

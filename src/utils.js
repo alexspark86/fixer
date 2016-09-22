@@ -19,6 +19,24 @@ export function getDocumentHeight () {
 }
 
 /**
+ * Get actual width of the document.
+ * @return {Number}
+ */
+export function getDocumentWidth () {
+  let body = document.body;
+  let html = document.documentElement;
+  let width = 0;
+
+  if (typeof document.width !== 'undefined') {
+    width = document.width; // For webkit browsers
+  } else if (body && html) {
+    width = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
+  }
+
+  return width;
+}
+
+/**
  * Get inner height of the window.
  * @return {Number}
  */
