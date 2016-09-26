@@ -29,7 +29,7 @@ export function getWindowSize () {
   let html = document.documentElement;
   let width, height;
 
-  if (window && body && html) {
+  if (window || body || html) {
     width = window.innerWidth || html.clientWidth || body.clientWidth;
     height = window.innerHeight || html.clientHeight || body.clientHeight;
   }
