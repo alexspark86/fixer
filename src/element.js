@@ -185,14 +185,10 @@ export default class Element {
       [this.options.position]: offset + "px",
       left: this.offset.left + "px",
       zIndex: this.styles.zIndex === "auto" ? "100" : this.styles.zIndex,
+      width: this.styles.width,
       marginTop: 0,
       marginBottom: 0
     };
-
-    // Add width property if needed
-    if (this.options.setWidth) {
-      cssProperties.width = this.styles.width;
-    }
 
     // Set styles for a node
     setStyle(element, cssProperties);
