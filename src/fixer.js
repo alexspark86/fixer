@@ -1,10 +1,10 @@
 import Element, {POSITION, STATE, DEFAULTS} from "./element";
-import {getScrolledPosition, defineElement, getDocumentHeight, getDocumentWidth, getClientHeight} from "./utils";
+import {getScrolledPosition, defineElement, getDocumentSize, getScreenSize} from "./utils";
 import debounce from "debounce";
 import throttle from "throttleit";
 
-let documentWidth;
-let documentHeight;
+let documentSize;
+let screenSize;
 
 /**
  * Class representing a fixer.
@@ -17,8 +17,8 @@ class Fixer {
    */
   constructor () {
     // Save initial document height value
-    documentHeight = getDocumentHeight();
-    documentWidth = getDocumentWidth();
+    documentSize = getDocumentSize();
+    screenSize = getScreenSize();
 
     // Create an array for registering elements to fix
     this.elements = [];
@@ -30,7 +30,13 @@ class Fixer {
 
     // Listen to the page resize and recalculate elements width
     let onResize = debounce(() => {
-      if (documentHeight !== getDocumentHeight() || documentWidth !== getDocumentWidth()) {
+      let currentScreenSize = getScreenSize();
+
+      if (screenSize !== currentScreenSize) {
+        // Update screen size value
+        screenSize = currentScreenSize;
+
+        // Reset all elements if screen was resized
         this.resetElements();
       }
     }, 4);
@@ -132,7 +138,6 @@ class Fixer {
     let elements;
     let sum = 0;
     let scrolled = getScrolledPosition();
-    let windowHeight = getClientHeight();
 
     // Check arguments and reassign them if necessary
     if (typeof position === "number" || typeof position === "function") {
@@ -153,7 +158,7 @@ class Fixer {
     }
 
     // Offset can't be larger than documentHeight, so choose a smaller value between them
-    offset = Math.min(offset, documentHeight - windowHeight);
+    offset = Math.min(offset, documentSize.height - screenSize.height);
 
     // Unfix all elements to properly recalculate offset values
     this._unfixAll();
@@ -184,7 +189,7 @@ class Fixer {
       // Check conditions
       let isNeedToFix = element.options.position === POSITION.top
         ? (element.offset.top <= offset + stack)
-        : (element.offset.bottom >= offset - stack + windowHeight);
+        : (element.offset.bottom >= offset - stack + screenSize.height);
 
       let isLimited = limitDiff !== null ? limitDiff < height : false;
       let isHideByLimit = limitDiff !== null ? limitDiff <= 0 : false;
@@ -215,10 +220,10 @@ class Fixer {
    */
   _onScroll (scrolled, forceFix) {
     // Check document height (needs to update element values if the document height has dynamically changed)
-    this._checkDocumentHeight();
+    this._checkDocumentSize();
 
-    // Update document width
-    documentWidth = getDocumentWidth();
+    // Update document size
+    documentSize = getDocumentSize();
 
     // Update offsets of limits before fix/unFix elements (to prevent fix limit of each element before it offset was calculated)
     let i = this.elements.length;
@@ -241,12 +246,11 @@ class Fixer {
     let offset = element.offset;
     let limit = element.limit;
     let stack = this._getStackHeight(element, scrolled);
-    let windowHeight = getClientHeight();
 
     // Check conditions
     let isNeedToFix = element.options.position === POSITION.top
       ? (offset.top <= scrolled.top + stack)
-      : (offset.bottom >= scrolled.top - stack + windowHeight);
+      : (offset.bottom >= scrolled.top - stack + screenSize.height);
     let isNeedToLimit = limit !== null ? limit <= scrolled.top + element.node.offsetHeight + stack : false;
 
     // Check current state
@@ -355,12 +359,12 @@ class Fixer {
    * Update offsets of elements if the document's height has changed.
    * @protected
    */
-  _checkDocumentHeight () {
-    let currentDocumentHeight = getDocumentHeight();
+  _checkDocumentSize () {
+    let currentDocumentSize = getDocumentSize();
 
-    if (currentDocumentHeight !== documentHeight) {
+    if (currentDocumentSize !== documentSize) {
       // Save current height of the document
-      documentHeight = currentDocumentHeight;
+      documentSize = currentDocumentSize;
 
       // Update values for each element
       let i = this.elements.length;

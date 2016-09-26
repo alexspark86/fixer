@@ -1,55 +1,43 @@
 import objectAssign from "object-assign";
 
 /**
- * Get actual height of the document.
- * @return {Number}
+ * Get actual width and height of the document.
+ * @return {Object}
  */
-export function getDocumentHeight () {
+export function getDocumentSize () {
   let body = document.body;
   let html = document.documentElement;
-  let height = 0;
+  let {width, height} = document;
 
-  if (typeof document.height !== 'undefined') {
-    height = document.height; // For webkit browsers
-  } else if (body && html) {
+  if (typeof width === "undefined" && typeof height === "undefined" && body && html) {
+    width = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
     height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
   }
+  else if (!body && !html) {
+    throw new Error("Can't calculate document size. Make sure that the method is called when the document is ready.");
+  }
 
-  return height;
+  return { width, height };
 }
 
 /**
- * Get actual width of the document.
- * @return {Number}
+ * Get width and height of the screen (viewport).
+ * @return {Object}
  */
-export function getDocumentWidth () {
+export function getScreenSize () {
   let body = document.body;
   let html = document.documentElement;
-  let width = 0;
+  let {width, height} = window.screen;
 
-  if (typeof document.width !== 'undefined') {
-    width = document.width; // For webkit browsers
-  } else if (body && html) {
-    width = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
+  if (typeof width === "undefined" && typeof height === "undefined" && window && body && html) {
+    width = window.innerWidth || html.clientWidth || body.clientWidth;
+    height = window.innerHeight || html.clientHeight || body.clientHeight;
+  }
+  else if (!body && !html) {
+    throw new Error("Can't calculate screen size. Make sure that the method is called when the document is ready.");
   }
 
-  return width;
-}
-
-/**
- * Get inner height of the window.
- * @return {Number}
- */
-export function getClientHeight () {
-  let body = document.body;
-  let html = document.documentElement;
-  let height = 0;
-
-  if (body && html) {
-    height = Math.min( body.offsetHeight, html.clientHeight, html.offsetHeight );
-  }
-
-  return height;
+  return { width, height }
 }
 
 /**
