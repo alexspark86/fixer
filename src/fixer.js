@@ -32,7 +32,7 @@ class Fixer {
     let onResize = debounce(() => {
       let currentScreenSize = getScreenSize();
 
-      if (screenSize !== currentScreenSize) {
+      if (screenSize.width !== currentScreenSize.width || screenSize.height !== currentScreenSize.height) {
         // Update screen size value
         screenSize = currentScreenSize;
 
@@ -362,7 +362,7 @@ class Fixer {
   _checkDocumentSize () {
     let currentDocumentSize = getDocumentSize();
 
-    if (currentDocumentSize !== documentSize) {
+    if (currentDocumentSize.width !== documentSize.width || currentDocumentSize.height !== documentSize.height) {
       // Save current height of the document
       documentSize = currentDocumentSize;
 
