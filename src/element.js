@@ -47,7 +47,8 @@ export const EVENT = {
  * @property {Boolean} placeholder Indicates whether placeholder is needed
  * @property {String} placeholderClass Classname to generate the placeholder
  * @property {String} fixedClass Classname to add for a fixed element
- * @property {Boolean} stack Parameter indicates whether the height of the element count for fixing other elements
+ * @property {Boolean} setWidth Property indicates whether to automatically calculate the width of the element on fixing
+ * @property {Boolean} stack Property indicates whether the height of the element count for fixing other elements
  * @property {HTMLElement|String|Function} limit Selector, node or function of the limit for an element
  * @property {HTMLElement|String|Function} stretchTo EXPERIMENTAL feature – Selector, node or function of the coordinate to stretch element vertically to it
  */
@@ -56,6 +57,7 @@ export const DEFAULTS = {
   placeholder: true,
   placeholderClass: "fixer-placeholder",
   fixedClass: "_fixed",
+  setWidth: true,
   stack: true,
   limit: null,
   stretchTo: null
@@ -131,9 +133,11 @@ export default class Element {
   _createPlaceholder () {
     let placeholder = document.createElement("span");
 
+    // Set placeholder className
     placeholder.className = this.options.placeholderClass;
 
-    setStyle(placeholder, {
+    // Init styles for placeholder
+    let cssProperties = {
       zIndex: "-1", // for buggy Safari
       float: this.styles.float,
       clear: this.styles.clear,
@@ -147,11 +151,19 @@ export default class Element {
       marginRight: this.styles.marginRight,
       marginBottom: this.styles.marginBottom,
       marginLeft: this.styles.marginLeft,
-      width: this.node.offsetWidth + "px",
       height: this.node.offsetHeight + "px",
       maxWidth: this.styles.maxWidth
-    });
+    };
 
+    // Add width property if needed
+    if (this.options.setWidth) {
+      cssProperties.width = this.node.offsetWidth + "px";
+    }
+
+    // Add styles for placeholder node
+    setStyle(placeholder, cssProperties);
+
+    // Insert placeholder into document
     this.node.parentNode.insertBefore(placeholder, this.node.nextSibling);
 
     return placeholder;
@@ -167,16 +179,20 @@ export default class Element {
     // Dispatch the event
     this.node.dispatchEvent(createEvent(EVENT.preFixed));
 
-    // Set styles for an element node
+    // Init styles for an element node
     let cssProperties = {
       position: "fixed",
       [this.options.position]: offset + "px",
       left: this.offset.left + "px",
       zIndex: this.styles.zIndex === "auto" ? "100" : this.styles.zIndex,
       marginTop: 0,
-      marginBottom: 0,
-      width: this.styles.width
+      marginBottom: 0
     };
+
+    // Add width property if needed
+    if (this.options.setWidth) {
+      cssProperties.width = this.styles.width;
+    }
 
     // Set styles for a node
     setStyle(element, cssProperties);
@@ -185,14 +201,14 @@ export default class Element {
     if (placeholder) {
       setStyle(placeholder, {
         display: this.styles.display,
-        width: this.node.offsetWidth + "px"
+        width: this.options.setWidth ? (this.node.offsetWidth + "px") : ""
       });
     }
 
-    // Add fixed className for an element node
+    // Add fixed className for the element node
     addClass(element, this.options.fixedClass);
 
-    // Set fixed state for the instance of an element
+    // Set fixed state for the element
     this.state = STATE.fixed;
 
     // Dispatch the event
@@ -246,8 +262,8 @@ export default class Element {
     // Dispatch the event
     this.node.dispatchEvent(createEvent(EVENT.preLimited));
 
-    // Set styles for an element node
-    setStyle(element, {
+    // Init styles for the element
+    let cssProperties = {
       position: "absolute",
       top: offsetTop + "px",
       left: offsetLeft + "px",
@@ -255,9 +271,16 @@ export default class Element {
       right: "auto",
       zIndex: this.styles.zIndex === "auto" ? "100" : this.styles.zIndex,
       marginTop: 0,
-      marginBottom: 0,
-      width: this.styles.width
-    });
+      marginBottom: 0
+    };
+
+    // Add width property if needed
+    if (this.options.setWidth) {
+      cssProperties.width = this.styles.width;
+    }
+
+    // Set styles for the element node
+    setStyle(element, cssProperties);
 
     // Set styles for placeholder node
     if (placeholder) {

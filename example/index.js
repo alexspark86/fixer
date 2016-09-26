@@ -12,7 +12,9 @@ document.addEventListener("DOMContentLoaded", function () {
   let fixer = new Fixer();
 
   fixer
-    .addElement(".menu")
+    .addElement(".menu", {
+      setWidth: false
+    })
     .addElement("#side-block-1", {
       limit: "#side-block-2"
     })
