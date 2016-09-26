@@ -1,10 +1,10 @@
 import Element, {POSITION, STATE, DEFAULTS} from "./element";
-import {getScrolledPosition, defineElement, getDocumentSize, getScreenSize} from "./utils";
+import {getScrolledPosition, defineElement, getDocumentSize, getWindowSize} from "./utils";
 import debounce from "debounce";
 import throttle from "throttleit";
 
 let documentSize;
-let screenSize;
+let windowSize;
 
 /**
  * Class representing a fixer.
@@ -18,7 +18,7 @@ class Fixer {
   constructor () {
     // Save initial document height value
     documentSize = getDocumentSize();
-    screenSize = getScreenSize();
+    windowSize = getWindowSize();
 
     // Create an array for registering elements to fix
     this.elements = [];
@@ -30,11 +30,11 @@ class Fixer {
 
     // Listen to the page resize and recalculate elements width
     let onResize = debounce(() => {
-      let currentScreenSize = getScreenSize();
+      let currentWindowSize = getWindowSize();
 
-      if (screenSize.width !== currentScreenSize.width || screenSize.height !== currentScreenSize.height) {
+      if (windowSize.width !== currentWindowSize.width || windowSize.height !== currentWindowSize.height) {
         // Update screen size value
-        screenSize = currentScreenSize;
+        windowSize = currentWindowSize;
 
         // Reset all elements if screen was resized
         this.resetElements();
@@ -158,7 +158,7 @@ class Fixer {
     }
 
     // Offset can't be larger than documentHeight, so choose a smaller value between them
-    offset = Math.min(offset, documentSize.height - screenSize.height);
+    offset = Math.min(offset, documentSize.height - windowSize.height);
 
     // Unfix all elements to properly recalculate offset values
     this._unfixAll();
@@ -189,7 +189,7 @@ class Fixer {
       // Check conditions
       let isNeedToFix = element.options.position === POSITION.top
         ? (element.offset.top <= offset + stack)
-        : (element.offset.bottom >= offset - stack + screenSize.height);
+        : (element.offset.bottom >= offset - stack + windowSize.height);
 
       let isLimited = limitDiff !== null ? limitDiff < height : false;
       let isHideByLimit = limitDiff !== null ? limitDiff <= 0 : false;
@@ -250,7 +250,7 @@ class Fixer {
     // Check conditions
     let isNeedToFix = element.options.position === POSITION.top
       ? (offset.top <= scrolled.top + stack)
-      : (offset.bottom >= scrolled.top - stack + screenSize.height);
+      : (offset.bottom >= scrolled.top - stack + windowSize.height);
     let isNeedToLimit = limit !== null ? limit <= scrolled.top + element.node.offsetHeight + stack : false;
 
     // Check current state

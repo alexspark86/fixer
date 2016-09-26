@@ -1,4 +1,4 @@
-import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, removeClass, objectHasValue, createEvent, getScreenSize} from "./utils";
+import {defineElement, calculateStyles, calculateOffset, setStyle, addClass, removeClass, objectHasValue, createEvent, getWindowSize} from "./utils";
 import objectAssign from "object-assign";
 
 /**
@@ -301,7 +301,7 @@ export default class Element {
   stretch (scrolled) {
     let stretchTo = getStretchOffset(this.options.stretchTo, this.options.position) - scrolled.top;
     let top = this.node.getBoundingClientRect().top;
-    let {height: windowHeight} = getScreenSize();
+    let {height: windowHeight} = getWindowSize();
 
     stretchTo = windowHeight - stretchTo < 0 ? windowHeight : stretchTo;
 

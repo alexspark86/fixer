@@ -21,19 +21,19 @@ export function getDocumentSize () {
 }
 
 /**
- * Get width and height of the screen (viewport).
+ * Get width and height of the viewport.
  * @return {Object}
  */
-export function getScreenSize () {
+export function getWindowSize () {
   let body = document.body;
   let html = document.documentElement;
-  let {width, height} = window.screen;
+  let width, height;
 
-  if (typeof width === "undefined" && typeof height === "undefined" && window && body && html) {
+  if (window && body && html) {
     width = window.innerWidth || html.clientWidth || body.clientWidth;
     height = window.innerHeight || html.clientHeight || body.clientHeight;
   }
-  else if (!body && !html) {
+  else {
     throw new Error("Can't calculate screen size. Make sure that the method is called when the document is ready.");
   }
 
