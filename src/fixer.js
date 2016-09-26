@@ -95,14 +95,14 @@ class Fixer {
     while (i--) {
       let item = this.elements[i];
 
-      if (item && item.hasOwnProperty('node') && (this.elements[i]['node'] === element)) {
-        let placeholder = this.elements[i].placeholder;
+      if (item && item.hasOwnProperty('node') && (item.node === element)) {
+        let placeholder = item.placeholder;
 
-        this.elements[i].unFix();
+        item.unFix();
         this.elements.splice(i, 1);
 
-        document.body.removeChild(placeholder);
-        placeholder = this.elements[i].placeholder = null;
+        placeholder.parentNode.removeChild(placeholder);
+        placeholder = item.placeholder = null;
 
         this.resetElements();
 
