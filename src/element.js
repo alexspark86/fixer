@@ -179,15 +179,15 @@ export default class Element {
     // Dispatch the event
     this.node.dispatchEvent(createEvent(EVENT.preFixed));
 
-    // Init styles for an element node
+    // Init styles for the element node
     let cssProperties = {
       position: "fixed",
       [this.options.position]: offset + "px",
       left: this.offset.left + "px",
       zIndex: this.styles.zIndex === "auto" ? "100" : this.styles.zIndex,
-      width: this.styles.width,
       marginTop: 0,
-      marginBottom: 0
+      marginBottom: 0,
+      width: this.styles.width
     };
 
     // Set styles for a node

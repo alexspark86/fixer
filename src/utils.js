@@ -65,6 +65,7 @@ export function defineElement (element) {
  */
 export function calculateStyles (element) {
   const styles = window.getComputedStyle(element, null);
+  const width = element.currentStyle.width !== "auto" ? element.currentStyle.width : styles.width;
 
   return objectAssign({}, {
     position: styles.position,
@@ -77,7 +78,7 @@ export function calculateStyles (element) {
     marginRight: styles.marginRight,
     marginBottom: styles.marginBottom,
     marginLeft: styles.marginLeft,
-    width: styles.width,
+    width: width,
     maxWidth: styles.maxWidth
   });
 }
