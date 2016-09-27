@@ -64,9 +64,16 @@ export function defineElement (element) {
  * @param {HTMLElement} element
  */
 export function calculateStyles (element) {
+  // Get computed browser styles
   const styles = window.getComputedStyle(element, null);
-  const width = element.currentStyle.width !== "auto" ? element.currentStyle.width : styles.width;
 
+  // IE computed width
+  const currentStyle = element.currentStyle;
+
+  // Set computed width from IE or from other browser
+  const width = currentStyle && currentStyle.width !== "auto" ? currentStyle.width : styles.width;
+
+  // Return new object with selected styles properties
   return objectAssign({}, {
     position: styles.position,
     top: styles.top,
