@@ -361,8 +361,11 @@ class Fixer {
    */
   _checkDocumentSize () {
     let currentDocumentSize = getDocumentSize();
+    let isWidthEqual = ( currentDocumentSize.width === documentSize.width ) || ( Math.abs(currentDocumentSize.width - documentSize.width) > 1 );
+    let isHeightEqual = ( currentDocumentSize.height === documentSize.height ) || ( Math.abs(currentDocumentSize.height - documentSize.height) > 1 );
 
-    if (currentDocumentSize.width !== documentSize.width || currentDocumentSize.height !== documentSize.height) {
+    // Check is the document size was changed
+    if (!isWidthEqual || !isHeightEqual) {
       // Save current height of the document
       documentSize = currentDocumentSize;
 
