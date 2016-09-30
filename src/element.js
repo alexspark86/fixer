@@ -122,6 +122,11 @@ export default class Element {
 
       // Dispatch the event
       this.node.dispatchEvent(createEvent(EVENT.init));
+
+      // Hack for mobile Safari to properly fix element while user scrolls a page
+      if (this.styles.transform === "none") {
+        setStyle(this.node, { transform: "translateZ(0)" });
+      }
     }
   }
 
