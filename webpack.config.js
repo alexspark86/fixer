@@ -7,7 +7,8 @@ const TARGET = process.env.npm_lifecycle_event;
 const PATHS = {
   src: path.join(__dirname, "src"),
   build: path.join(__dirname, "lib"),
-  example: path.join(__dirname, "example")
+  example: path.join(__dirname, "example"),
+  exampleBuild: path.join(__dirname, "example-build")
 };
 
 const common = {
@@ -44,7 +45,7 @@ const common = {
 if (TARGET === 'start' || !TARGET) {
   module.exports = merge(common, {
     entry: {
-      "example/example": path.resolve(PATHS.example, "index")
+      "example": path.resolve(PATHS.example, "index")
     },
     devtool: "source-map",
     devServer: {
@@ -79,6 +80,25 @@ if (TARGET === "build") {
         compress: {
           warnings: false
         }
+      })
+    ]
+  });
+}
+
+if (TARGET === "deploy") {
+  module.exports = merge(common, {
+    output: {
+      path: PATHS.exampleBuild
+    },
+    entry: {
+      "example": path.resolve(PATHS.example, "index")
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        filename: "index.html",
+        title: "Fixer example",
+        template: path.join(PATHS.example, "index.ejs"),
+        inject: false
       })
     ]
   });

@@ -20,3 +20,6 @@ npm-debug.log
 
 # build folder
 /lib
+
+# build-example folder
+/example-build

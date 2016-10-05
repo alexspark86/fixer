@@ -15,6 +15,9 @@ Icon?
 # Example folder
 example
 
+# Example build folder
+example-build
+
 # Build entry point
 index.js
 
