@@ -45,7 +45,6 @@
     "start": "webpack-dev-server",
     "build": "rimraf ./lib/* && webpack",
     "deploy": "rimraf ./example-build/* && webpack && gh-pages -d example-build && rimraf ./example-build",
-    "deploy2": "gh-pages -d example",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build && npm run deploy"
   }
 }
