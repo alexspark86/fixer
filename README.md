@@ -1,5 +1,6 @@
 # Fixer
-Fixer helps you to easily fix elements in stacks on a page without using jQuery. 
+Fixer helps you to easily fix elements in stacks on page scroll without using jQuery.
+[Demo](http://alexspark86.github.io/fixer/)
 
 ## Notice ##
 The plugin is currently in development. Be careful to use it in production.
