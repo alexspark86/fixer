@@ -77,9 +77,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	document.addEventListener("DOMContentLoaded", function () {
 	  var fixer = new _fixer2.default();
 
-	  fixer.addElement(".menu", {
-	    setWidth: false
-	  }).addElement("#side-block-1", {
+	  var menu = fixer.addElement(".menu", { setWidth: false });
+
+	  menu.on("fixed", function (e) {
+	    console.log(this);
+	  });
+
+	  fixer.addElement("#side-block-1", {
 	    limit: "#side-block-2"
 	  }).addElement("#side-block-2", {
 	    limit: ".bottom-block"
@@ -133,7 +137,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * Create fixer.
 	   */
-
 	  function Fixer() {
 	    var _this = this;
 
@@ -271,7 +274,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "getHeight",
 	    value: function getHeight() {
-	      var position = arguments.length <= 0 || arguments[0] === undefined ? _element.DEFAULTS.position : arguments[0];
+	      var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _element.DEFAULTS.position;
 	      var offset = arguments[1];
 
 	      var elements = void 0;
@@ -384,7 +387,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "_fixToggle",
 	    value: function _fixToggle(element, scrolled) {
-	      var forceFix = arguments.length <= 2 || arguments[2] === undefined ? element.state === _element.STATE.default : arguments[2];
+	      var forceFix = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : element.state === _element.STATE.default;
 
 	      // Get values for an element
 	      var offset = element.offset;
@@ -465,7 +468,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "_getCurrentHeight",
 	    value: function _getCurrentHeight() {
-	      var position = arguments.length <= 0 || arguments[0] === undefined ? _element.DEFAULTS.position : arguments[0];
+	      var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _element.DEFAULTS.position;
 
 	      var fixedHeight = 0;
 	      var limitedHeight = 0;
@@ -561,7 +564,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.DEFAULTS = exports.EVENT = exports.STATE = exports.POSITION = undefined;
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -664,7 +667,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {string|HTMLElement} selector
 	   * @param {defaults} options
 	   */
-
 	  function Element(selector, options) {
 	    _classCallCheck(this, Element);
 
@@ -768,8 +770,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function fix(offset) {
 	      var _cssProperties;
 
-	      var element = this.node;
-	      var placeholder = this.placeholder;
+	      var element = this.node,
+	          placeholder = this.placeholder;
 
 	      // Dispatch the event
 
@@ -810,8 +812,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function unFix() {
 	      var _setStyle;
 
-	      var element = this.node;
-	      var placeholder = this.placeholder;
+	      var element = this.node,
+	          placeholder = this.placeholder;
 
 	      // Dispatch the event
 
@@ -843,12 +845,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Set position absolute with correct coordinates relative to parent to properly fix an element by its limiter.
 	     */
 	    value: function setLimited() {
-	      var element = this.node;
-	      var offset = this.offset;
-	      var limit = this.limit;
-	      var parent = this.parent;
-	      var placeholder = this.placeholder;
-	      var styles = this.styles;
+	      var element = this.node,
+	          offset = this.offset,
+	          limit = this.limit,
+	          parent = this.parent,
+	          placeholder = this.placeholder,
+	          styles = this.styles;
 
 
 	      var parentOffset = (0, _utils.calculateOffset)(parent);
@@ -905,10 +907,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var stretchTo = getStretchOffset(this.options.stretchTo, this.options.position) - scrolled.top;
 	      var top = this.node.getBoundingClientRect().top;
 
-	      var _getWindowSize = (0, _utils.getWindowSize)();
-
-	      var windowHeight = _getWindowSize.height;
-
+	      var _getWindowSize = (0, _utils.getWindowSize)(),
+	          windowHeight = _getWindowSize.height;
 
 	      stretchTo = windowHeight - stretchTo < 0 ? windowHeight : stretchTo;
 
@@ -1101,7 +1101,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	exports.getDocumentSize = getDocumentSize;
 	exports.getWindowSize = getWindowSize;
@@ -1128,9 +1128,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	function getDocumentSize() {
 	  var body = document.body;
 	  var html = document.documentElement;
-	  var _document = document;
-	  var width = _document.width;
-	  var height = _document.height;
+	  var _document = document,
+	      width = _document.width,
+	      height = _document.height;
 
 
 	  if (typeof width === "undefined" && typeof height === "undefined" && body && html) {
@@ -1551,10 +1551,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./index.scss\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var content = __webpack_require__(10);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(11)(content, {});
+	var update = __webpack_require__(12)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -1571,8 +1571,77 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 10 */,
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(11)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "/* http://meyerweb.com/eric/tools/css/reset/\n   v2.0 | 20110126\n   License: none (public domain)\n*/\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, img, ins, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\nb, u, i, center,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td,\narticle, aside, canvas, details, embed,\nfigure, figcaption, footer, header, hgroup,\nmenu, nav, output, ruby, section, summary,\ntime, mark, audio, video {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  font-size: 100%;\n  vertical-align: baseline; }\n\n/* HTML5 display-role reset for older browsers */\narticle, aside, details, figcaption, figure,\nfooter, header, hgroup, menu, nav, section {\n  display: block; }\n\nbody {\n  line-height: 1; }\n\nol, ul {\n  list-style: none; }\n\nblockquote, q {\n  quotes: none; }\n\nblockquote:before, blockquote:after,\nq:before, q:after {\n  content: '';\n  content: none; }\n\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\n\n/* Layout */\nhtml, body {\n  margin: 0;\n  padding: 0;\n  height: 100%; }\n\n.page {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n  min-width: 960px;\n  color: #333;\n  font-family: 'PT Serif', serif;\n  font-size: 16px;\n  font-weight: 400;\n  line-height: 1.6; }\n\n.page__header,\n.page__footer {\n  flex-shrink: 0; }\n\n.page__content {\n  flex: 1 0 auto; }\n\n.page__container {\n  margin: 0 auto;\n  width: 960px; }\n\n/* Base design */\n.page__header,\n.page__footer {\n  padding: 20px 0;\n  background: #000;\n  color: #fff; }\n\n.menu {\n  margin-bottom: 40px;\n  padding: 10px 0;\n  height: 50px;\n  border-bottom: 1px solid #ccc;\n  box-sizing: border-box; }\n\n.side-block {\n  clear: both;\n  padding: 10px;\n  min-height: 100px;\n  border: 1px solid; }\n  .side-block._left {\n    float: left;\n    margin: 0 10px 10px 0; }\n  .side-block._right {\n    float: right;\n    margin: 0 0 10px 10px; }\n\nh1 {\n  margin-bottom: 20px;\n  font-family: \"Merriweather\", sans-serif;\n  font-size: 36px;\n  font-weight: 600; }\n\np {\n  margin: 15px 0; }\n\n.bottom-block {\n  display: block;\n  margin-bottom: 15px;\n  padding: 10px;\n  min-height: 50px;\n  border: 1px solid; }\n\n#bottom-block-2 {\n  height: 100px; }\n\n.row {\n  display: flex;\n  flex-direction: row; }\n  .row__col {\n    position: relative;\n    flex-basis: 50%;\n    box-sizing: border-box; }\n    .row__col:nth-child(2n) {\n      padding-left: 20px; }\n\n/* Debug styles */\n._fixed {\n  background-color: rgba(255, 255, 0, 0.5); }\n\n.fixer-placeholder {\n  background: rgba(255, 0, 0, 0.5); }\n", ""]);
+
+	// exports
+
+
+/***/ },
 /* 11 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*

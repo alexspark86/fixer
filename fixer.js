@@ -107,7 +107,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * Create fixer.
 	   */
-
 	  function Fixer() {
 	    var _this = this;
 
@@ -245,7 +244,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "getHeight",
 	    value: function getHeight() {
-	      var position = arguments.length <= 0 || arguments[0] === undefined ? _element.DEFAULTS.position : arguments[0];
+	      var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _element.DEFAULTS.position;
 	      var offset = arguments[1];
 
 	      var elements = void 0;
@@ -358,7 +357,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "_fixToggle",
 	    value: function _fixToggle(element, scrolled) {
-	      var forceFix = arguments.length <= 2 || arguments[2] === undefined ? element.state === _element.STATE.default : arguments[2];
+	      var forceFix = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : element.state === _element.STATE.default;
 
 	      // Get values for an element
 	      var offset = element.offset;
@@ -439,7 +438,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "_getCurrentHeight",
 	    value: function _getCurrentHeight() {
-	      var position = arguments.length <= 0 || arguments[0] === undefined ? _element.DEFAULTS.position : arguments[0];
+	      var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _element.DEFAULTS.position;
 
 	      var fixedHeight = 0;
 	      var limitedHeight = 0;
@@ -535,7 +534,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.DEFAULTS = exports.EVENT = exports.STATE = exports.POSITION = undefined;
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -638,7 +637,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {string|HTMLElement} selector
 	   * @param {defaults} options
 	   */
-
 	  function Element(selector, options) {
 	    _classCallCheck(this, Element);
 
@@ -742,8 +740,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function fix(offset) {
 	      var _cssProperties;
 
-	      var element = this.node;
-	      var placeholder = this.placeholder;
+	      var element = this.node,
+	          placeholder = this.placeholder;
 
 	      // Dispatch the event
 
@@ -784,8 +782,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function unFix() {
 	      var _setStyle;
 
-	      var element = this.node;
-	      var placeholder = this.placeholder;
+	      var element = this.node,
+	          placeholder = this.placeholder;
 
 	      // Dispatch the event
 
@@ -817,12 +815,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Set position absolute with correct coordinates relative to parent to properly fix an element by its limiter.
 	     */
 	    value: function setLimited() {
-	      var element = this.node;
-	      var offset = this.offset;
-	      var limit = this.limit;
-	      var parent = this.parent;
-	      var placeholder = this.placeholder;
-	      var styles = this.styles;
+	      var element = this.node,
+	          offset = this.offset,
+	          limit = this.limit,
+	          parent = this.parent,
+	          placeholder = this.placeholder,
+	          styles = this.styles;
 
 
 	      var parentOffset = (0, _utils.calculateOffset)(parent);
@@ -879,10 +877,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var stretchTo = getStretchOffset(this.options.stretchTo, this.options.position) - scrolled.top;
 	      var top = this.node.getBoundingClientRect().top;
 
-	      var _getWindowSize = (0, _utils.getWindowSize)();
-
-	      var windowHeight = _getWindowSize.height;
-
+	      var _getWindowSize = (0, _utils.getWindowSize)(),
+	          windowHeight = _getWindowSize.height;
 
 	      stretchTo = windowHeight - stretchTo < 0 ? windowHeight : stretchTo;
 
@@ -1075,7 +1071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	exports.getDocumentSize = getDocumentSize;
 	exports.getWindowSize = getWindowSize;
@@ -1102,9 +1098,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	function getDocumentSize() {
 	  var body = document.body;
 	  var html = document.documentElement;
-	  var _document = document;
-	  var width = _document.width;
-	  var height = _document.height;
+	  var _document = document,
+	      width = _document.width,
+	      height = _document.height;
 
 
 	  if (typeof width === "undefined" && typeof height === "undefined" && body && html) {
