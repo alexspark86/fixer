@@ -107,6 +107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * Create fixer.
 	   */
+
 	  function Fixer() {
 	    var _this = this;
 
@@ -637,6 +638,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {string|HTMLElement} selector
 	   * @param {defaults} options
 	   */
+
 	  function Element(selector, options) {
 	    _classCallCheck(this, Element);
 
