@@ -77,13 +77,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	document.addEventListener("DOMContentLoaded", function () {
 	  var fixer = new _fixer2.default();
 
-	  var menu = fixer.addElement(".menu", { setWidth: false });
-
-	  menu.on("fixed", function (e) {
-	    console.log(this);
-	  });
-
-	  fixer.addElement("#side-block-1", {
+	  fixer.addElement(".menu", {
+	    setWidth: false
+	  }).addElement("#side-block-1", {
 	    limit: "#side-block-2"
 	  }).addElement("#side-block-2", {
 	    limit: ".bottom-block"
@@ -91,7 +87,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    position: "bottom"
 	  }).addElement("#bottom-block-2", {
 	    position: "bottom"
-	  });np;
+	  });
 	}, false);
 
 /***/ },
