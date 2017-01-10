@@ -35,7 +35,8 @@ export const EVENT = {
   unfixed: "unfixed",
   preUnfixed: "preUnfixed",
   limited: "limited",
-  preLimited: "preLimited"
+  preLimited: "preLimited",
+  stretched: "stretched"
 };
 
 /**
@@ -305,14 +306,19 @@ export default class Element {
    */
   stretch (scrolled) {
     let stretchTo = getStretchOffset(this.options.stretchTo, this.options.position) - scrolled.top;
-    let top = this.node.getBoundingClientRect().top;
-    let {height: windowHeight} = getWindowSize();
+    const {height, top} = this.node.getBoundingClientRect();
+    const {height: windowHeight} = getWindowSize();
 
-    stretchTo = windowHeight - stretchTo < 0 ? windowHeight : stretchTo;
+    stretchTo = (windowHeight - stretchTo < 0 ? windowHeight : stretchTo) - top;
 
     setStyle(this.node, {
-      height: (stretchTo - top) + "px"
+      height: stretchTo + "px"
     });
+
+    // Dispatch the event if element height changed
+    if (height !== stretchTo) {
+      this.node.dispatchEvent(createEvent(EVENT.stretched));
+    }
 
     // Calculate stretch offset
     function getStretchOffset (limit, position) {

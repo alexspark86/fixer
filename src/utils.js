@@ -175,7 +175,7 @@ export function removeClass(element, className) {
  * @param {*} value
  */
 export function objectHasValue (object, value) {
-  for (var key in object) {
+  for (let key in object) {
     if (object.hasOwnProperty(key) && object[key] === value) {
       return true;
     }
@@ -196,11 +196,8 @@ export function createEvent (type) {
     event = new Event(type);
   }
   catch (error) {
-    let doesntBubble = false;
-    let isntCancelable = false;
-
     event = document.createEvent("Event");
-    event.initEvent(type, doesntBubble, isntCancelable);
+    event.initEvent(type, {bubbles: false, cancelable: false});
   }
 
   return event;
