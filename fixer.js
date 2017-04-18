@@ -52,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -64,9 +64,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = _fixer2.default;
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -244,7 +244,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "getHeight",
 	    value: function getHeight() {
-	      var position = arguments.length <= 0 || arguments[0] === undefined ? _element.DEFAULTS.position : arguments[0];
+	      var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _element.DEFAULTS.position;
 	      var offset = arguments[1];
 
 	      var elements = void 0;
@@ -357,7 +357,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "_fixToggle",
 	    value: function _fixToggle(element, scrolled) {
-	      var forceFix = arguments.length <= 2 || arguments[2] === undefined ? element.state === _element.STATE.default : arguments[2];
+	      var forceFix = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : element.state === _element.STATE.default;
+
+	      // Do nothing if element is invisible or has no parent
+	      if (!element.hasParent() || !element.isVisible()) return;
 
 	      // Get values for an element
 	      var offset = element.offset;
@@ -438,7 +441,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "_getCurrentHeight",
 	    value: function _getCurrentHeight() {
-	      var position = arguments.length <= 0 || arguments[0] === undefined ? _element.DEFAULTS.position : arguments[0];
+	      var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _element.DEFAULTS.position;
 
 	      var fixedHeight = 0;
 	      var limitedHeight = 0;
@@ -523,9 +526,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = Fixer;
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -534,7 +537,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.DEFAULTS = exports.EVENT = exports.STATE = exports.POSITION = undefined;
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -741,8 +744,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function fix(offset) {
 	      var _cssProperties;
 
-	      var element = this.node;
-	      var placeholder = this.placeholder;
+	      var element = this.node,
+	          placeholder = this.placeholder;
 
 	      // Dispatch the event
 
@@ -783,8 +786,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function unFix() {
 	      var _setStyle;
 
-	      var element = this.node;
-	      var placeholder = this.placeholder;
+	      var element = this.node,
+	          placeholder = this.placeholder;
 
 	      // Dispatch the event
 
@@ -816,12 +819,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Set position absolute with correct coordinates relative to parent to properly fix an element by its limiter.
 	     */
 	    value: function setLimited() {
-	      var element = this.node;
-	      var offset = this.offset;
-	      var limit = this.limit;
-	      var parent = this.parent;
-	      var placeholder = this.placeholder;
-	      var styles = this.styles;
+	      var element = this.node,
+	          offset = this.offset,
+	          limit = this.limit,
+	          parent = this.parent,
+	          placeholder = this.placeholder,
+	          styles = this.styles;
 
 
 	      var parentOffset = (0, _utils.calculateOffset)(parent);
@@ -877,15 +880,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function stretch(scrolled) {
 	      var stretchTo = getStretchOffset(this.options.stretchTo, this.options.position) - scrolled.top;
 
-	      var _node$getBoundingClie = this.node.getBoundingClientRect();
+	      var _node$getBoundingClie = this.node.getBoundingClientRect(),
+	          height = _node$getBoundingClie.height,
+	          top = _node$getBoundingClie.top;
 
-	      var height = _node$getBoundingClie.height;
-	      var top = _node$getBoundingClie.top;
-
-	      var _getWindowSize = (0, _utils.getWindowSize)();
-
-	      var windowHeight = _getWindowSize.height;
-
+	      var _getWindowSize = (0, _utils.getWindowSize)(),
+	          windowHeight = _getWindowSize.height;
 
 	      stretchTo = (windowHeight - stretchTo < 0 ? windowHeight : stretchTo) - top;
 
@@ -1066,6 +1066,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      return this;
 	    }
+	  }, {
+	    key: "hasParent",
+	    value: function hasParent() {
+	      return typeof this.parent !== "undefined";
+	    }
+	  }, {
+	    key: "isVisible",
+	    value: function isVisible() {
+	      var node = this.node;
+	      return !!(node.offsetWidth || node.offsetHeight || typeof node.getClientRects !== "undefined" && node.getClientRects().length);
+	    }
 	  }]);
 
 	  return Element;
@@ -1073,9 +1084,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = Element;
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -1083,7 +1094,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	exports.getDocumentSize = getDocumentSize;
 	exports.getWindowSize = getWindowSize;
@@ -1110,9 +1121,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	function getDocumentSize() {
 	  var body = document.body;
 	  var html = document.documentElement;
-	  var _document = document;
-	  var width = _document.width;
-	  var height = _document.height;
+	  var _document = document,
+	      width = _document.width,
+	      height = _document.height;
 
 
 	  if (typeof width === "undefined" && typeof height === "undefined" && body && html) {
@@ -1302,12 +1313,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return event;
 	}
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
+
+	/*
+	object-assign
+	(c) Sindre Sorhus
+	@license MIT
+	*/
 
 	'use strict';
 	/* eslint-disable no-unused-vars */
+	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
 	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
@@ -1328,7 +1346,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			// Detect buggy property enumeration order in older V8 versions.
 
 			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-			var test1 = new String('abc');  // eslint-disable-line
+			var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
 			test1[5] = 'de';
 			if (Object.getOwnPropertyNames(test1)[0] === '5') {
 				return false;
@@ -1357,7 +1375,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 
 			return true;
-		} catch (e) {
+		} catch (err) {
 			// We don't expect any of the above to throw, but better to be safe.
 			return false;
 		}
@@ -1377,8 +1395,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				}
 			}
 
-			if (Object.getOwnPropertySymbols) {
-				symbols = Object.getOwnPropertySymbols(from);
+			if (getOwnPropertySymbols) {
+				symbols = getOwnPropertySymbols(from);
 				for (var i = 0; i < symbols.length; i++) {
 					if (propIsEnumerable.call(from, symbols[i])) {
 						to[symbols[i]] = from[symbols[i]];
@@ -1391,9 +1409,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	
 	/**
@@ -1450,9 +1468,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = Date.now || now
 
@@ -1461,9 +1479,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = throttle;
 
@@ -1499,7 +1517,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
