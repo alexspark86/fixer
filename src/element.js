@@ -475,4 +475,16 @@ export default class Element {
 
     return this;
   }
+
+  hasParent () {
+    return (typeof this.parent !== "undefined");
+  }
+
+  isVisible () {
+    const node = this.node;
+    return !!( node.offsetWidth ||
+               node.offsetHeight ||
+               ((typeof node.getClientRects !== "undefined") && node.getClientRects().length) );
+  }
+
 }

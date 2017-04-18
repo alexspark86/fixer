@@ -242,6 +242,9 @@ class Fixer {
    * @param {Boolean=} [forceFix = element.state === STATE.default] Option to fix an element even if it fixed
    */
   _fixToggle (element, scrolled, forceFix = element.state === STATE.default) {
+    // Do nothing if element is invisible or has no parent
+    if (!element.hasParent() || !element.isVisible()) return;
+
     // Get values for an element
     let offset = element.offset;
     let limit = element.limit;
