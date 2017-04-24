@@ -21,20 +21,17 @@ const common = {
     filename: "[name].js"
   },
   module: {
-    loaders: [
-      {
-        test: /\.css$/,
-        loader: "style-loader!css-loader"
-      },
+    rules: [
       {
         test: /\.scss$/,
-        loaders: ["style", "css", "sass"]
+        use: ["style-loader", "css-loader", "sass-loader"],
+        include: [PATHS.src, PATHS.example]
       },
       {
         test: /\.js$/,
         loader: "babel-loader",
-        exclude: /node_modules/,
-        query: {
+        include: [PATHS.src, PATHS.example],
+        options: {
           presets: ["es2015"]
         }
       }
@@ -53,7 +50,6 @@ if (TARGET === 'start' || !TARGET) {
       historyApiFallback: true,
       hot: false,
       inline: true,
-      progress: true,
       stats: "errors-only",
       host: process.env.HOST,
       port: process.env.PORT || 3000
