@@ -197,7 +197,7 @@ export function createEvent (type) {
   }
   catch (error) {
     event = document.createEvent("Event");
-    event.initEvent(type, {bubbles: false, cancelable: false});
+    event.initEvent(type, false, false);
   }
 
   return event;
