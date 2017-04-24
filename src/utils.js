@@ -75,18 +75,18 @@ export function calculateStyles (element) {
 
   // Return new object with selected styles properties
   return objectAssign({}, {
-    position: styles.position,
-    top: styles.top,
-    zIndex: styles.zIndex,
-    float: styles.float,
-    clear: styles.clear,
-    display: styles.display,
-    marginTop: styles.marginTop,
-    marginRight: styles.marginRight,
-    marginBottom: styles.marginBottom,
-    marginLeft: styles.marginLeft,
+    position: styles.position || styles.getPropertyValue('position'),
+    top: styles.top || styles.getPropertyValue('top'),
+    zIndex: styles.zIndex || styles.getPropertyValue('z-index'),
+    float: styles.float || styles.getPropertyValue('float'),
+    clear: styles.clear || styles.getPropertyValue('clear'),
+    display: styles.display || styles.getPropertyValue('display'),
+    marginTop: styles.marginTop || styles.getPropertyValue('margin-top'),
+    marginRight: styles.marginRight || styles.getPropertyValue('margin-right'),
+    marginBottom: styles.marginBottom || styles.getPropertyValue('margin-bottom'),
+    marginLeft: styles.marginLeft || styles.getPropertyValue('margin-left'),
     width: width,
-    maxWidth: styles.maxWidth
+    maxWidth: styles.maxWidth || styles.getPropertyValue('max-width')
   });
 }
 
