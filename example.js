@@ -60,11 +60,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fixer2 = _interopRequireDefault(_fixer);
 
-	var _webfontloader = __webpack_require__(8);
+	var _webfontloader = __webpack_require__(7);
 
 	var _webfontloader2 = _interopRequireDefault(_webfontloader);
 
-	__webpack_require__(9);
+	__webpack_require__(8);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -112,7 +112,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _debounce2 = _interopRequireDefault(_debounce);
 
-	var _throttleit = __webpack_require__(7);
+	var _throttleit = __webpack_require__(6);
 
 	var _throttleit2 = _interopRequireDefault(_throttleit);
 
@@ -1437,20 +1437,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	
-	/**
-	 * Module dependencies.
-	 */
-
-	var now = __webpack_require__(6);
+/***/ (function(module, exports) {
 
 	/**
 	 * Returns a function, that, as long as it continues to be invoked, will not
 	 * be triggered. The function will be called after it stops being called for
 	 * N milliseconds. If `immediate` is passed, trigger the function on the
-	 * leading edge, instead of the trailing.
+	 * leading edge, instead of the trailing. The function also has a property 'clear' 
+	 * that is a function which will clear the timer to prevent previously scheduled executions. 
 	 *
 	 * @source underscore.js
 	 * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
@@ -1465,23 +1459,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (null == wait) wait = 100;
 
 	  function later() {
-	    var last = now() - timestamp;
+	    var last = Date.now() - timestamp;
 
-	    if (last < wait && last > 0) {
+	    if (last < wait && last >= 0) {
 	      timeout = setTimeout(later, wait - last);
 	    } else {
 	      timeout = null;
 	      if (!immediate) {
 	        result = func.apply(context, args);
-	        if (!timeout) context = args = null;
+	        context = args = null;
 	      }
 	    }
 	  };
 
-	  return function debounced() {
+	  var debounced = function(){
 	    context = this;
 	    args = arguments;
-	    timestamp = now();
+	    timestamp = Date.now();
 	    var callNow = immediate && !timeout;
 	    if (!timeout) timeout = setTimeout(later, wait);
 	    if (callNow) {
@@ -1491,22 +1485,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return result;
 	  };
+
+	  debounced.clear = function() {
+	    if (timeout) {
+	      clearTimeout(timeout);
+	      timeout = null;
+	    }
+	  };
+
+	  return debounced;
 	};
 
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
-
-	module.exports = Date.now || now
-
-	function now() {
-	    return new Date().getTime()
-	}
-
-
-/***/ }),
-/* 7 */
 /***/ (function(module, exports) {
 
 	module.exports = throttle;
@@ -1544,7 +1536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* Web Font Loader v1.6.27 - (c) Adobe Systems, Google. License: Apache 2.0 */(function(){function aa(a,b,c){return a.call.apply(a.bind,arguments)}function ba(a,b,c){if(!a)throw Error();if(2<arguments.length){var d=Array.prototype.slice.call(arguments,2);return function(){var c=Array.prototype.slice.call(arguments);Array.prototype.unshift.apply(c,d);return a.apply(b,c)}}return function(){return a.apply(b,arguments)}}function p(a,b,c){p=Function.prototype.bind&&-1!=Function.prototype.bind.toString().indexOf("native code")?aa:ba;return p.apply(null,arguments)}var q=Date.now||function(){return+new Date};function ca(a,b){this.a=a;this.m=b||a;this.c=this.m.document}var da=!!window.FontFace;function t(a,b,c,d){b=a.c.createElement(b);if(c)for(var e in c)c.hasOwnProperty(e)&&("style"==e?b.style.cssText=c[e]:b.setAttribute(e,c[e]));d&&b.appendChild(a.c.createTextNode(d));return b}function u(a,b,c){a=a.c.getElementsByTagName(b)[0];a||(a=document.documentElement);a.insertBefore(c,a.lastChild)}function v(a){a.parentNode&&a.parentNode.removeChild(a)}
@@ -1568,16 +1560,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(10);
+	var content = __webpack_require__(9);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(12)(content, {});
+	var update = __webpack_require__(11)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -1594,10 +1586,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(11)();
+	exports = module.exports = __webpack_require__(10)();
 	// imports
 
 
@@ -1608,7 +1600,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports) {
 
 	/*
@@ -1664,7 +1656,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/*
