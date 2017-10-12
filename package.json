@@ -13,7 +13,8 @@
   },
   "keywords": [
     "scroll",
-    "fixed"
+    "fixed",
+    "stick"
   ],
   "license": "GPL-3.0",
   "dependencies": {
