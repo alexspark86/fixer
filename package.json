@@ -1,5 +1,5 @@
 {
-  "name": "fixer.js",
+  "name": "fixer-js",
   "version": "1.4.19",
   "description": "Fixer helps you to easily fix elements in stacks on a page without using jQuery.",
   "main": "lib/fixer.js",
