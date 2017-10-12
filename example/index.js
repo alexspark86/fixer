@@ -9,7 +9,7 @@ WebFont.load({
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  let fixer = new Fixer();
+  const fixer = new Fixer();
 
   fixer
     .addElement(".menu", {

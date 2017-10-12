@@ -15,7 +15,7 @@ Here is a working live demo: http://alexspark86.github.io/fixer
 import Fixer from 'fixer-js';
 
 const fixer = new Fixer();
-fixer.addElement(".header");
+fixer.addElement('.header');
 ```
 
 ### Influences
@@ -49,7 +49,7 @@ Basic usage:
 ```js
 const fixer = new Fixer();
 
-fixer.addElement(".menu");
+fixer.addElement('.menu');
 ```
 
 Fixing multiple elements:
@@ -58,8 +58,8 @@ Fixing multiple elements:
 const fixer = new Fixer();
 
 fixer
-  .addElement(".menu")
-  .addElement(".toc");
+  .addElement('.menu')
+  .addElement('.toc');
 ```
 
 Position option:
@@ -67,8 +67,8 @@ Position option:
 ```js
 const fixer = new Fixer();
 
-fixer.addElement(".bottom-block", {
-  position: "bottom"
+fixer.addElement('.bottom-block', {
+  position: 'bottom'
 });
 ```
 
@@ -78,12 +78,12 @@ Setting a limit for a fixed element - when reaching the limit the element will s
 const fixer = new Fixer();
 
 fixer
-  .addElement(".menu", {
-    limit: "#limit-block-1"
+  .addElement('.menu', {
+    limit: '#limit-block-1'
   })
-  .addElement(".toc", {
+  .addElement('.toc', {
     limit: function () {
-      const limitBlock = document.getElementById("limit-block-2");
+      const limitBlock = document.getElementById('limit-block-2');
       return limitBlock.getBoundingClientRect().top + document.documentElement.scrollTop;
     }
   });
@@ -94,9 +94,9 @@ Using a custom class-name for a fixed element and for its placeholder:
 ```js
 const fixer = new Fixer();
 
-fixer.addElement(".menu", {
-  fixedClass: "my-fixed-classname",
-  placeholderClass: "my-placeholder-classname"
+fixer.addElement('.menu', {
+  fixedClass: 'my-fixed-classname',
+  placeholderClass: 'my-placeholder-classname'
 });
 ```
 
@@ -105,8 +105,8 @@ Removing element from Fixer:
 ```js
 const fixer = new Fixer();
 
-fixer.addElement(".menu");
-fixer.removeElement(".menu");
+fixer.addElement('.menu');
+fixer.removeElement('.menu');
 ```
 
 
