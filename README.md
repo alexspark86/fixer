@@ -1,26 +1,61 @@
 # Fixer
-Fixer helps you to easily fix elements in stacks on page scroll without using jQuery.
+Easily fix elements in stacks on page scroll without using jQuery.
 
-[Demo](http://alexspark86.github.io/fixer/)
+### Demo
+Here is a working live demo: http://alexspark86.github.io/fixer
 
-## Notice ##
-The plugin is currently in development. Be careful to use it in production.
+### Features
+* stick element to the top or the bottom of the screen when it reaches the corresponding side of the viewport
+* stick multiple elements in sequences (one after one)
+* specify limiters, upon reaching which sticky element will go beyond the edge of the screen
+* predict height of sticky elements before `scroll` event (useful if you need to accurately scroll to some block)
 
-## Usage ##
+### Simple example
+```js
+import Fixer from 'fixer-js';
 
-The basic Fixer design pattern is one instance of plugin, which has one or more elements added to it. Each element may have its settings for fixing on the page. By default, all elements are fixed to the top of the screen one after the other.
+const fixer = new Fixer();
+fixer.addElement(".header");
+```
 
-Default options: 
+### Influences
+
+Fixer is inspired by [ScrollToFixed](https://github.com/bigspotteddog/ScrollToFixed), but doesn't use jQuery, has a simpler interface and more advanced features.
+
+## Installation
+Install with [npm](https://www.npmjs.com/):
+```sh
+npm install fixer-js
+```
+
+Install with [yarn](https://yarnpkg.com/):
+```sh
+yarn add fixer-js
+```
+
+## Usage
+
+The basic Fixer design pattern is one instance of plugin, which has one or more elements added to it. Each element may have its settings for fixing on the page. By default, all elements are fixed to the top of the screen one after another.
+
+All examples assume that plugin is bootstrapped using:
 
 ```js
-var fixer = new Fixer();
+import Fixer from 'fixer-js';
+```
+
+
+Basic usage: 
+
+```js
+const fixer = new Fixer();
+
 fixer.addElement(".menu");
 ```
 
 Fixing multiple elements:
 
 ```js
-var fixer = new Fixer();
+const fixer = new Fixer();
 
 fixer
   .addElement(".menu")
@@ -30,7 +65,7 @@ fixer
 Position option:
 
 ```js
-var fixer = new Fixer();
+const fixer = new Fixer();
 
 fixer.addElement(".bottom-block", {
   position: "bottom"
@@ -40,7 +75,7 @@ fixer.addElement(".bottom-block", {
 Setting a limit for a fixed element - when reaching the limit the element will scroll up with page:
 
 ```js
-var fixer = new Fixer();
+const fixer = new Fixer();
 
 fixer
   .addElement(".menu", {
@@ -48,10 +83,8 @@ fixer
   })
   .addElement(".toc", {
     limit: function () {
-      var limitBlock = document.getElementById("limit-block-2");
-      var limitOffset = limitBlock.getBoundingClientRect().top + document.documentElement.scrollTop;
-  
-      return limitOffset;
+      const limitBlock = document.getElementById("limit-block-2");
+      return limitBlock.getBoundingClientRect().top + document.documentElement.scrollTop;
     }
   });
 ```
@@ -59,7 +92,7 @@ fixer
 Using a custom class-name for a fixed element and for its placeholder:
 
 ```js
-var fixer = new Fixer();
+const fixer = new Fixer();
 
 fixer.addElement(".menu", {
   fixedClass: "my-fixed-classname",
@@ -70,7 +103,7 @@ fixer.addElement(".menu", {
 Removing element from Fixer:
 
 ```js
-var fixer = new Fixer();
+const fixer = new Fixer();
 
 fixer.addElement(".menu");
 fixer.removeElement(".menu");
