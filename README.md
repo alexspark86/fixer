@@ -147,13 +147,13 @@ There are two options for using:
 | [offset] | `Number`<br/>`Function`<br/> | `window.pageYOffset` | Offset value relative to the document for which to calculate the height of the fixed elements |
 
 #### Examples of getting height
-Get height of all fixed elements:
+Get height of fixed elements:
 ```js
 const heightOfElementsFixedOnTop = fixer.getHeight();
 const heightOfElementFixedOnBottom = fixer.getHeight('bottom');
 ```
 
-Predict height of fixed element before scroll to the `#some-block`:
+Predicting the height of the elements which will be sticky after scrolling to the `# some-block`:
 ```js
 const predictedHeightOfFixedElements = fixer.getHeight(function() {
   const myBlock = document.querySelector('#some-block');
@@ -175,6 +175,30 @@ const predictedHeightOfFixedElements = fixer.getHeight(function() {
 | **setWidth** | `Boolean` | `true` | Indicates whether to automatically calculate the width of the element on fixing |
 | **stack** | `Boolean` | `true` | Indicates whether the height of the element count for fixing other elements |
 | **stretchTo** | `HTMLElement`<br/>`String`<br/>`Function` | `null` | **_Experimental feature:_** coordinate to stretch element vertically to it |
+<br/>
+
+### Element events
+Registered elements trigger events:
+* `init`
+* `update`
+* `preFixed`
+* `fixed`
+* `preUnfixed`
+* `unfixed`
+* `preLimited`
+* `limited`
+* `stretched`
+
+Basic example of adding event listener for an element:
+```js
+const fixer = new Fixer();
+const stickyHeader = fixer.addElement('.header');
+
+stickyHeader.on('fixed', function() {
+  alert('Header is fixed!')
+});
+```
+
 <br/>
 
 ## Copyright and license
