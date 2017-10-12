@@ -22,6 +22,8 @@ fixer.addElement('.header');
 
 Fixer is inspired by [ScrollToFixed](https://github.com/bigspotteddog/ScrollToFixed), but doesn't use jQuery, has a simpler interface and more advanced features.
 
+<br/>
+
 ## Installation
 Install with [npm](https://www.npmjs.com/):
 ```sh
@@ -32,6 +34,8 @@ Install with [yarn](https://yarnpkg.com/):
 ```sh
 yarn add fixer-js
 ```
+
+<br/>
 
 ## Usage
 
