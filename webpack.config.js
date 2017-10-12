@@ -13,7 +13,7 @@ const PATHS = {
 
 const common = {
   entry: {
-    "fixer": path.resolve(__dirname, "index")
+    "fixer": path.resolve(PATHS.src, "fixer")
   },
   output: {
     libraryTarget: "umd",
