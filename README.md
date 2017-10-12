@@ -108,6 +108,7 @@ const fixer = new Fixer();
 fixer.addElement('.menu');
 fixer.removeElement('.menu');
 ```
+<br/>
 
 ## API
 
@@ -116,7 +117,7 @@ Add an element to Fixer.
 
 | Param | Type |
 | --- | --- |
-| selector | <ul><li>`String`</li><li>`HTMLElement`</li><li>`jQuery`</li></ul> | 
+| selector | `String` or `HTMLElement` or `jQuery` | 
 | [options](#add-element-options) | `Object` |
 
 ### removeElement(selector)
@@ -124,7 +125,7 @@ Remove an element from Fixer.
 
 | Param | Type |
 | --- | --- |
-| selector | <ul><li>`String`</li><li>`HTMLElement`</li><li>`jQuery`</li></ul> | 
+| selector | `String` or `HTMLElement` or `jQuery` | 
 
 ### resetElements()
 Reset all elements position and calculated values.
@@ -139,7 +140,7 @@ There are two options for using:
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [position] | `String` | `top` | Side of the screen where elements should be fixed |
-| [offset] | <ul><li>`Number`</li><li>`Function`</li></ul> | `window.pageYOffset` | Offset value relative to the document for which to calculate the height of the fixed elements |
+| [offset] | `Number`<br/>`Function`<br/> | `window.pageYOffset` | Offset value relative to the document for which to calculate the height of the fixed elements |
 
 #### Examples of getting height
 Get height of all fixed elements:
@@ -155,20 +156,22 @@ const predictedHeightOfFixedElements = fixer.getHeight(function() {
   return myBlock.getBoundingClientRect().top + window.pageYOffset;
 });
 ```
+<br/>
 
 <a name="add-element-options"></a>
 ### Configuration options for adding element
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| **position** | `String` | `top` | Screen side to fix an element.<br><br>Available options: <ul><li>`top`</li><li>`bottom`</li></ul> |
-| **limit** | <ul><li>`HTMLElement`</li><li>`String`</li><li>`Function`</li></ul> | `null` | Limit for an element, upon reaching which sticky element will go beyond the edge of the screen |
+| **position** | `String` | `top` | Screen side to fix an element.<br/><br/>Available options: <ul><li>`top`</li><li>`bottom`</li></ul> |
+| **limit** | `HTMLElement`<br/>`String`<br/>`Function` | `null` | Limit for an element, upon reaching which sticky element will go beyond the edge of the screen |
 | **placeholder** | `Boolean` | `true` | Indicates whether placeholder is needed |
 | **placeholderClass** | `String` | `fixer-placeholder` | Classname to generate the placeholder |
 | **fixedClass** | `String` | `_fixed` | Classname to add for a fixed element |
 | **setWidth** | `Boolean` | `true` | Indicates whether to automatically calculate the width of the element on fixing |
 | **stack** | `Boolean` | `true` | Indicates whether the height of the element count for fixing other elements |
-| **stretchTo** | <ul><li>`HTMLElement`</li><li>`String`</li><li>`Function`</li></ul> | `null` | **_Experimental feature:_** coordinate to stretch element vertically to it |
+| **stretchTo** | `HTMLElement`<br/>`String`<br/>`Function` | `null` | **_Experimental feature:_** coordinate to stretch element vertically to it |
+<br/>
 
 ## Copyright and license
 
