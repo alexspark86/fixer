@@ -68,7 +68,7 @@ if (TARGET === 'start' || !TARGET) {
 if (TARGET === "build") {
   module.exports = merge(common, {
     entry: {
-      "fixer.min": path.resolve(__dirname, "index")
+      "fixer.min": path.resolve(PATHS.src, "fixer")
     },
     plugins: [
       new webpack.optimize.UglifyJsPlugin({
